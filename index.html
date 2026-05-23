@@ -1133,76 +1133,92 @@ async function buildVideoListPage(_data) {
   pageEl.appendChild(wrap);
 
   /* ---- 状態 ---- */
-  let vlSubTab  = 'all';
-  let vlQuery   = '';
-  let vlCardIdx = 10000;
+  let vlSubTab = 'all';
+  let vlQuery  = '';
 
   /* ---- カード色クラスのマップ ---- */
   const colorClass = { r: '', n: 'card-vl-n', rn: 'card-vl-rn' };
+  const typeLabel  = { all:'すべて', video:'動画', short:'ショート', live:'配信' };
+  const typeTag    = { video:'動画', short:'ショート', live:'配信' };
 
-  /* ---- レンダリング関数 ---- */
+  /* ---- renderVL: キャッシュのみ参照、非同期処理は一切しない ---- */
   function renderVL() {
     const grid    = document.getElementById('vlGrid');
     const empty   = document.getElementById('vlEmpty');
     const countEl = document.getElementById('vlCount');
     if (!grid) return;
-    grid.innerHTML = '';
 
     const q = vlQuery.trim().toLowerCase();
 
     const filtered = allYtCards.filter(item => {
       if (vlSubTab !== 'all' && item.videoType !== vlSubTab) return false;
       if (q) {
-        const cached = ytCache[item.url] || {};
-        return (cached.title || '').toLowerCase().includes(q);
+        const title = (ytCache[item.url]?.title || '').toLowerCase();
+        return title.includes(q);
       }
       return true;
     });
 
-    const typeLabel = { all:'すべて', video:'動画', short:'ショート', live:'配信' }[vlSubTab];
     countEl.innerHTML = q
       ? `「<em>${esc(vlQuery)}</em>」の検索結果 — <em>${filtered.length}</em> 件`
-      : `${typeLabel} — <em>${filtered.length}</em> 件`;
+      : `${typeLabel[vlSubTab]} — <em>${filtered.length}</em> 件`;
 
-    if (filtered.length === 0) { empty.style.display = 'block'; return; }
-    empty.style.display = 'none';
+    /* DOM を差分更新：既存カードは再利用し、不要分だけ削除・追加 */
+    const existingCards = Array.from(grid.children);
 
-    /* 新しい順 = ファイル上から順（reverseしない） */
+    /* 不要なカードを末尾から削除 */
+    while (grid.children.length > filtered.length) {
+      grid.removeChild(grid.lastChild);
+    }
+
     filtered.forEach((item, i) => {
-      const wrapper  = document.createElement('div');
-      const localIdx = vlCardIdx + i;
-      wrapper.style.animationDelay = `${Math.min(i * 0.03, 0.6)}s`;
-
+      const title = ytCache[item.url]?.title || item.url;
       const extra = colorClass[item.color] || '';
-      wrapper.className = `card card-link${extra ? ' ' + extra : ''}`;
+      const tag   = typeTag[item.videoType] || 'YouTube';
 
-      const typeTag = { video:'動画', short:'ショート', live:'配信' }[item.videoType] || 'YouTube';
+      if (existingCards[i] && existingCards[i].dataset.vid === item.videoId) {
+        /* 既存カード：タイトルだけ更新 */
+        const titleEl = existingCards[i].querySelector('.vl-card-title');
+        if (titleEl) titleEl.textContent = title;
+      } else {
+        /* 新規カード作成 */
+        const wrapper = document.createElement('div');
+        wrapper.className = `card card-link${extra ? ' ' + extra : ''}`;
+        wrapper.dataset.vid = item.videoId;
+        wrapper.style.animationDelay = `${Math.min(i * 0.03, 0.6)}s`;
+        wrapper.innerHTML = `
+          <div class="card-media">
+            <div class="card-thumb-wrap">
+              <img class="card-thumb" src="https://img.youtube.com/vi/${esc(item.videoId)}/mqdefault.jpg" alt="" loading="lazy">
+            </div>
+            <div class="card-body">
+              <div class="card-label">${esc(tag)}</div>
+              <div class="card-title vl-card-title">${esc(title)}</div>
+            </div>
+          </div>`;
+        wrapper.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
 
-      wrapper.innerHTML = `
-        <div class="card-media">
-          <div class="card-thumb-wrap">
-            <img class="card-thumb" src="https://img.youtube.com/vi/${esc(item.videoId)}/mqdefault.jpg" alt="" loading="lazy">
-          </div>
-          <div class="card-body">
-            <div class="card-label">${esc(typeTag)}</div>
-            <div class="card-title vl-title-${localIdx}">読み込み中...</div>
-          </div>
-        </div>`;
-
-      (async () => {
-        const d  = await fetchYT(item.url);
-        const el = wrapper.querySelector(`.vl-title-${localIdx}`);
-        if (!el) return;
-        el.textContent = d.title || item.url;
-        /* 検索中で新たにタイトルが判明したら再描画 */
-        if (vlQuery.trim() && d.title) { vlCardIdx = 10000; renderVL(); }
-      })();
-
-      wrapper.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
-      grid.appendChild(wrapper);
+        if (i < grid.children.length) {
+          grid.replaceChild(wrapper, grid.children[i]);
+        } else {
+          grid.appendChild(wrapper);
+        }
+      }
     });
 
-    vlCardIdx += filtered.length;
+    empty.style.display = filtered.length === 0 ? 'block' : 'none';
+  }
+
+  /* ---- プリフェッチ：全タイトルをバックグラウンドで取得してから都度再描画 ---- */
+  async function prefetchTitles() {
+    const BATCH = 4;
+    for (let i = 0; i < allYtCards.length; i += BATCH) {
+      await Promise.allSettled(
+        allYtCards.slice(i, i + BATCH).map(item => fetchYT(item.url))
+      );
+      renderVL(); /* バッチ完了ごとにタイトルを反映 */
+      await new Promise(r => setTimeout(r, 120));
+    }
   }
 
   /* ---- イベントバインド ---- */
@@ -1211,7 +1227,6 @@ async function buildVideoListPage(_data) {
     if (searchEl) {
       searchEl.addEventListener('input', e => {
         vlQuery = e.target.value;
-        vlCardIdx = 10000;
         renderVL();
       });
     }
@@ -1219,12 +1234,13 @@ async function buildVideoListPage(_data) {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.vl-subtab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        vlSubTab  = btn.dataset.vtype;
-        vlCardIdx = 10000;
+        vlSubTab = btn.dataset.vtype;
         renderVL();
       });
     });
+
     renderVL();
+    prefetchTitles(); /* タイトル取得を非同期でバックグラウンド実行 */
   });
 }
 </script>
