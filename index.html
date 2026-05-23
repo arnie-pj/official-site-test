@@ -799,13 +799,14 @@ function buildCard(card, idx) {
       </div>`;
 
     (async () => {
-      const d    = await fetchX(url);
+      const d     = await fetchX(url);
       const imgEl = wrapper.querySelector(`.x-img-${idx}`);
       const txtEl = wrapper.querySelector(`.x-txt-${idx}`);
       if (txtEl) txtEl.textContent = d.title || url;
-      if (imgEl && d.thumbnail_url) {
-        imgEl.src            = d.thumbnail_url;
-        imgEl.style.display  = 'block';
+      const imgSrc = fields.IMG || d.thumbnail_url || '';
+      if (imgEl && imgSrc) {
+        imgEl.src           = imgSrc;
+        imgEl.style.display = 'block';
       }
     })();
 
@@ -832,15 +833,22 @@ function buildCard(card, idx) {
         </div>
       </div>`;
 
-    (async () => {
-      const d    = await fetchX(url);
-      const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
-      if (imgEl && d.thumbnail_url) {
-        imgEl.src           = d.thumbnail_url;
-        imgEl.style.display = 'block';
-        imgEl.dataset.full  = d.thumbnail_url;
-      }
-    })();
+    /* [IMG]フィールドがあれば即時表示、なければnoembedを試みる */
+    const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
+    if (fields.IMG) {
+      imgEl.src           = fields.IMG;
+      imgEl.style.display = 'block';
+      imgEl.dataset.full  = fields.IMG;
+    } else {
+      (async () => {
+        const d = await fetchX(url);
+        if (imgEl && d.thumbnail_url) {
+          imgEl.src           = d.thumbnail_url;
+          imgEl.style.display = 'block';
+          imgEl.dataset.full  = d.thumbnail_url;
+        }
+      })();
+    }
 
     /* カードクリックでリンクへ */
     wrapper.addEventListener('click', e => {
