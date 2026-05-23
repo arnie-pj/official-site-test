@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポートフォリオ</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  --bg:         #0d0d0d;
+  --bg2:        #141414;
+  --bg3:        #1a1a1a;
+  --surface:    #1e1e1e;
+  --surface2:   #252525;
+  --border:     #2e2e2e;
+  --accent:     #f5d000;
+  --accent-dim: rgba(245,208,0,0.12);
+  --accent-glow:rgba(245,208,0,0.25);
+  --text:       #f0f0f0;
+  --text2:      #999;
+  --text3:      #555;
+  --radius-sm:  8px;
+  --radius:     14px;
+  --radius-lg:  20px;
+}
+
+/* ============================================================
+   RESET & BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+table { border-collapse: collapse; width: 100%; }
+td, th { padding: 8px 12px; border: 1px solid var(--border); font-size: 0.9rem; }
+th { background: var(--surface2); color: var(--accent); }
+
+/* ============================================================
+   LOADING OVERLAY
+============================================================ */
+#loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 9999;
+  transition: opacity 0.5s;
+}
+#loadingOverlay.hidden { opacity: 0; pointer-events: none; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.loading-text { color: var(--text2); font-size: 0.9rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   HEADER
+============================================================ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13,13,13,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.site-name {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--accent);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   TAB NAV (in header)
+============================================================ */
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+  justify-content: center;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+.nav-tab {
+  padding: 6px 16px;
+  border-radius: 50px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.nav-tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.nav-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* ============================================================
+   PAGE SECTIONS
+============================================================ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   HERO STRIP (ページ上部の見出しライン)
+============================================================ */
+.page-hero {
+  padding: 40px 24px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.page-hero-title {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.page-hero-sub {
+  color: var(--text2);
+  font-size: 0.88rem;
+  margin-top: 6px;
+}
+
+/* ============================================================
+   SECTION HEADING
+============================================================ */
+.section-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 0;
+}
+.section-heading {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 1rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.section-heading::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 1.1em;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ============================================================
+   CARDS GRID
+============================================================ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+/* wide card — full width */
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+/* ============================================================
+   BASE CARD STYLE
+============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.35s ease both;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(245,208,0,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,208,0,0.1);
+}
+.card-link { cursor: pointer; display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   TYPE: html
+============================================================ */
+.card-html {
+  padding: 20px 24px;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.card-html img {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+.card-html table { margin-top: 12px; }
+.card-html td { color: var(--text); }
+.card-html tr:first-child td:first-child { color: var(--text2); }
+
+/* ============================================================
+   TYPE: link/youtube  &  img_comment
+============================================================ */
+.card-media {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 80px;
+}
+.card-thumb-wrap {
+  flex: 0 0 128px;
+  padding: 10px 0 10px 10px;
+  display: flex;
+  align-items: center;
+}
+.card-thumb {
+  width: 128px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+}
+.card-body {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  gap: 4px;
+}
+.card-label {
+  font-size: 0.68rem;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.card-title {
+  font-size: 0.93rem;
+  font-weight: 700;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+  color: var(--text);
+}
+.card-txt {
+  font-size: 0.82rem;
+  color: var(--text2);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================================
+   TYPE: link/x
+============================================================ */
+.card-x-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+}
+.card-x-wrap {
+  flex: 0 0 120px;
+  padding: 10px 0 10px 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================================
+   TYPE: fa_x  (虫眼鏡ボタン付き)
+============================================================ */
+.card-fax-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.btn-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-zoom:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ============================================================
+   LIGHTBOX
+============================================================ */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: zoom-out;
+}
+#lightbox.open { display: flex; }
+#lightbox img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer {
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 0.8rem;
+}
+footer .footer-site {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   PAGE BOTTOM PADDING
+============================================================ */
+.page-bottom { height: 60px; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 640px) {
+  header { padding: 0 12px; gap: 10px; }
+  .site-name { font-size: 0.95rem; }
+  .nav-tab { padding: 5px 12px; font-size: 0.78rem; }
+  .section-wrap { padding: 24px 12px 0; }
+  .page-hero { padding: 24px 12px 0; }
+  .cards-grid { grid-template-columns: 1fr; gap: 10px; }
+  .card-thumb-wrap { flex: 0 0 96px; }
+  .card-thumb { width: 96px; }
+  .card-x-wrap { flex: 0 0 96px; }
+  .card-x-img { width: 96px; height: 96px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ローディング -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">読み込み中...</div>
+</div>
+
+<!-- ヘッダー (タブはJSで生成) -->
+<header>
+  <div class="site-name" id="siteName">Portfolio</div>
+  <div class="nav-tabs" id="navTabs"></div>
+</header>
+
+<!-- ページコンテナ (JSで生成) -->
+<div id="pagesContainer"></div>
+
+<!-- フッター (database末尾の[FOOTER]で上書き可) -->
+<footer>
+  <div class="footer-site" id="footerSite">Portfolio</div>
+  <div id="footerText"></div>
+</footer>
+
+<!-- ライトボックス -->
+<div id="lightbox">
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- ============================================================
+     DATABASE PARSER & RENDERER
+     ============================================================ -->
+<script>
+'use strict';
+
+/* ----------------------------------------------------------
+   UTILITIES
+---------------------------------------------------------- */
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function ytThumb(url) {
+  const m = url.match(/[?&]v=([^&\s]+)/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : '';
+}
+
+/** X投稿URLから埋め込みデータを取得 (noembed) */
+const xCache = {};
+async function fetchX(url) {
+  if (xCache[url]) return xCache[url];
+  try {
+    const r = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+    const d = await r.json();
+    xCache[url] = d;
+    return d;
+  } catch { return {}; }
+}
+
+/** YouTubeタイトルを取得 (noembed) */
+const ytCache = {};
+async function fetchYT(url) {
+  if (ytCache[url]) return ytCache[url];
+  try {
+    const r = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+    const d = await r.json();
+    ytCache[url] = d;
+    return d;
+  } catch { return {}; }
+}
+
+/* ----------------------------------------------------------
+   DATABASE PARSER
+---------------------------------------------------------- */
+
+/**
+ * databaseテキストをパースして構造体を返す
+ * returns: { siteName, footerText, pages: [{ title, sections: [{ heading, cards }] }] }
+ * card: { size, type, subtype, fields: { URL, TXT, IMG, TITLE, html } }
+ */
+function parseDatabase(text) {
+  const lines = text.split('\n');
+  const result = { siteName: 'Portfolio', footerText: '', pages: [] };
+
+  let currentPage    = null;
+  let currentSection = null;
+  let currentCard    = null;
+  let htmlLines      = [];
+  let inCard         = false;
+
+  function finalizeCard() {
+    if (!currentCard || !currentSection) return;
+    if (currentCard.type === 'html') {
+      currentCard.fields.html = htmlLines.join('\n').trim();
+    }
+    currentSection.cards.push(currentCard);
+    currentCard = null;
+    htmlLines   = [];
+    inCard      = false;
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    /* メタ指定 */
+    if (line.startsWith('[SITE_NAME]')) {
+      result.siteName = line.replace('[SITE_NAME]','').trim();
+      continue;
+    }
+    if (line.startsWith('[FOOTER]')) {
+      result.footerText = line.replace('[FOOTER]','').trim();
+      continue;
+    }
+
+    /* ページ切り替え: # タイトル */
+    if (/^#\s+/.test(line) && !line.startsWith('##')) {
+      finalizeCard();
+      currentPage = { title: line.replace(/^#\s+/,''), sections: [] };
+      result.pages.push(currentPage);
+      currentSection = null;
+      continue;
+    }
+
+    /* セクション見出し: ## タイトル */
+    if (line.startsWith('## ')) {
+      finalizeCard();
+      if (!currentPage) { currentPage = { title: 'Main', sections: [] }; result.pages.push(currentPage); }
+      currentSection = { heading: line.replace(/^##\s+/,''), cards: [] };
+      currentPage.sections.push(currentSection);
+      continue;
+    }
+
+    /* カード開始: [START,...] */
+    if (line.startsWith('[START')) {
+      finalizeCard();
+      if (!currentSection) {
+        if (!currentPage) { currentPage = { title: 'Main', sections: [] }; result.pages.push(currentPage); }
+        currentSection = { heading: '', cards: [] };
+        currentPage.sections.push(currentSection);
+      }
+      // [START,SIZE,TYPE] or [START,SIZE,TYPE,SUBTYPE]
+      const inner = line.replace(/^\[START,?/,'').replace(/\]$/,'');
+      const parts = inner.split(',').map(s => s.trim());
+      currentCard = {
+        size:    parts[0] || 'card',
+        type:    parts[1] || 'html',
+        subtype: parts[2] || '',
+        fields:  {},
+      };
+      inCard    = true;
+      htmlLines = [];
+      continue;
+    }
+
+    /* カード終了: [END] */
+    if (line === '[END]') {
+      finalizeCard();
+      continue;
+    }
+
+    /* カード内フィールド */
+    if (inCard && currentCard) {
+      if (line.startsWith('[URL]')) {
+        currentCard.fields.URL = line.replace('[URL]','').trim();
+      } else if (line.startsWith('[TXT]')) {
+        currentCard.fields.TXT = line.replace('[TXT]','').trim();
+      } else if (line.startsWith('[IMG]')) {
+        currentCard.fields.IMG = line.replace('[IMG]','').trim();
+      } else if (line.startsWith('[TITLE]')) {
+        currentCard.fields.TITLE = line.replace('[TITLE]','').trim();
+      } else if (currentCard.type === 'html') {
+        htmlLines.push(rawLine); // html タイプはそのまま蓄積
+      }
+    }
+  }
+
+  finalizeCard();
+  return result;
+}
+
+/* ----------------------------------------------------------
+   CARD BUILDERS
+---------------------------------------------------------- */
+
+function buildCard(card, idx) {
+  const wrapper = document.createElement('div');
+  const delay   = Math.min(idx * 0.04, 0.8);
+  wrapper.style.animationDelay = `${delay}s`;
+
+  const isWide = card.size === 'wide';
+  if (isWide) wrapper.classList.add('card-wide');
+
+  const { type, subtype, fields } = card;
+
+  /* ---- html ---- */
+  if (type === 'html') {
+    wrapper.className += ' card';
+    const inner = document.createElement('div');
+    inner.className = 'card-html';
+    inner.innerHTML = fields.html || '';
+    wrapper.appendChild(inner);
+    return wrapper;
+  }
+
+  /* ---- link/youtube ---- */
+  if (type === 'link' && subtype === 'youtube') {
+    const url   = fields.URL || '';
+    const thumb = ytThumb(url);
+    wrapper.className += ' card card-link';
+    wrapper.setAttribute('data-href', url);
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-thumb-wrap">
+          <img class="card-thumb" src="${esc(thumb)}" alt="" loading="lazy">
+        </div>
+        <div class="card-body">
+          <div class="card-label">YouTube</div>
+          <div class="card-title yt-title-${idx}">読み込み中...</div>
+        </div>
+      </div>`;
+
+    /* YouTube タイトルを非同期取得 */
+    (async () => {
+      const d = await fetchYT(url);
+      const el = wrapper.querySelector(`.yt-title-${idx}`);
+      if (el) el.textContent = d.title || url;
+    })();
+
+    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    return wrapper;
+  }
+
+  /* ---- link/x ---- */
+  if (type === 'link' && subtype === 'x') {
+    const url = fields.URL || '';
+    wrapper.className += ' card card-link';
+    wrapper.setAttribute('data-href', url);
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-x-wrap">
+          <img class="card-x-img x-img-${idx}" src="" alt="" loading="lazy" style="display:none">
+        </div>
+        <div class="card-body">
+          <div class="card-label">𝕏 Post</div>
+          <div class="card-title x-txt-${idx}">読み込み中...</div>
+        </div>
+      </div>`;
+
+    (async () => {
+      const d    = await fetchX(url);
+      const imgEl = wrapper.querySelector(`.x-img-${idx}`);
+      const txtEl = wrapper.querySelector(`.x-txt-${idx}`);
+      if (txtEl) txtEl.textContent = d.title || url;
+      if (imgEl && d.thumbnail_url) {
+        imgEl.src            = d.thumbnail_url;
+        imgEl.style.display  = 'block';
+      }
+    })();
+
+    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    return wrapper;
+  }
+
+  /* ---- fa_x ---- */
+  if (type === 'fa_x') {
+    const url = fields.URL || '';
+    const txt = fields.TXT || '';
+    wrapper.className += ' card card-link';
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-x-wrap">
+          <img class="card-x-img fax-img-${idx}" src="" alt="" loading="lazy" style="display:none">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Fan Art</div>
+          <div class="card-title">${esc(txt)}</div>
+          <div class="card-fax-actions">
+            <button class="btn-zoom" data-idx="${idx}">🔍 画像を拡大</button>
+          </div>
+        </div>
+      </div>`;
+
+    (async () => {
+      const d    = await fetchX(url);
+      const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
+      if (imgEl && d.thumbnail_url) {
+        imgEl.src           = d.thumbnail_url;
+        imgEl.style.display = 'block';
+        imgEl.dataset.full  = d.thumbnail_url;
+      }
+    })();
+
+    /* カードクリックでリンクへ */
+    wrapper.addEventListener('click', e => {
+      if (e.target.closest('.btn-zoom')) return; // ボタンはここで止める
+      window.open(url, '_blank', 'noopener');
+    });
+
+    /* 虫眼鏡ボタン → ライトボックス */
+    wrapper.querySelector('.btn-zoom').addEventListener('click', e => {
+      e.stopPropagation();
+      const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
+      openLightbox(imgEl ? (imgEl.dataset.full || imgEl.src) : '');
+    });
+
+    return wrapper;
+  }
+
+  /* ---- img_comment ---- */
+  if (type === 'img_comment') {
+    const url   = fields.URL   || '#';
+    const img   = fields.IMG   || '';
+    const txt   = fields.TXT   || '';
+    const title = fields.TITLE || '';
+    wrapper.className += ' card card-link';
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-thumb-wrap">
+          <img class="card-thumb" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
+        </div>
+        <div class="card-body">
+          <div class="card-label">Portfolio</div>
+          ${title ? `<div class="card-title">${esc(title)}</div>` : ''}
+          <div class="card-txt">${esc(txt)}</div>
+        </div>
+      </div>`;
+
+    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    return wrapper;
+  }
+
+  /* フォールバック */
+  wrapper.className += ' card';
+  wrapper.innerHTML = `<div class="card-html"><pre>${esc(JSON.stringify(card, null, 2))}</pre></div>`;
+  return wrapper;
+}
+
+/* ----------------------------------------------------------
+   LIGHTBOX
+---------------------------------------------------------- */
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightbox').addEventListener('click', () => {
+  document.getElementById('lightbox').classList.remove('open');
+});
+
+/* ----------------------------------------------------------
+   RENDER PAGES
+---------------------------------------------------------- */
+function renderPages(data) {
+  /* サイト名 */
+  const sn = data.siteName || 'Portfolio';
+  document.title                         = sn;
+  document.getElementById('siteName').textContent   = sn;
+  document.getElementById('footerSite').textContent = sn;
+  if (data.footerText) {
+    document.getElementById('footerText').textContent = data.footerText;
+  }
+
+  const navTabs  = document.getElementById('navTabs');
+  const container = document.getElementById('pagesContainer');
+  navTabs.innerHTML  = '';
+  container.innerHTML = '';
+
+  if (data.pages.length === 0) return;
+
+  data.pages.forEach((page, pi) => {
+    /* タブ */
+    const tab = document.createElement('button');
+    tab.className   = 'nav-tab' + (pi === 0 ? ' active' : '');
+    tab.textContent = page.title;
+    tab.dataset.page = pi;
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`page-${pi}`).classList.add('active');
+    });
+    navTabs.appendChild(tab);
+
+    /* ページ要素 */
+    const pageEl = document.createElement('div');
+    pageEl.className = 'page' + (pi === 0 ? ' active' : '');
+    pageEl.id        = `page-${pi}`;
+
+    /* ページヒーロー */
+    const hero = document.createElement('div');
+    hero.className = 'page-hero';
+    hero.innerHTML = `<div class="page-hero-title">${esc(page.title)}</div>`;
+    pageEl.appendChild(hero);
+
+    let cardIdx = 0;
+
+    page.sections.forEach(section => {
+      const sw = document.createElement('div');
+      sw.className = 'section-wrap';
+
+      if (section.heading) {
+        const sh = document.createElement('div');
+        sh.className   = 'section-heading';
+        sh.textContent = section.heading;
+        sw.appendChild(sh);
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
+
+      section.cards.forEach(card => {
+        grid.appendChild(buildCard(card, cardIdx++));
+      });
+
+      sw.appendChild(grid);
+      pageEl.appendChild(sw);
+    });
+
+    const pb = document.createElement('div');
+    pb.className = 'page-bottom';
+    pageEl.appendChild(pb);
+
+    container.appendChild(pageEl);
+  });
+}
+
+/* ----------------------------------------------------------
+   INIT
+---------------------------------------------------------- */
+(async () => {
+  const overlay = document.getElementById('loadingOverlay');
+
+  try {
+    const res = await fetch('./database');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const data = parseDatabase(text);
+    renderPages(data);
+  } catch (err) {
+    console.error('database 読み込みエラー:', err);
+    document.querySelector('.loading-text').textContent =
+      'database ファイルの読み込みに失敗しました。\nindex.html と同じディレクトリに database ファイルを置いてください。\n（ローカルの file:// では動作しません。GitHub Pages 等のサーバーが必要です）';
+    return;
+  }
+
+  overlay.classList.add('hidden');
+  setTimeout(() => overlay.remove(), 600);
+})();
+</script>
+</body>
+</html>

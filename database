@@ -1,0 +1,45 @@
+[SITE_NAME]あなたの名前
+[FOOTER]created by あなたの名前
+
+# メイン
+## プロフィール
+[START,wide,html]
+<img src="./materials/main.png">
+<table>
+<tr><td>身長</td><td>158</td></tr>
+<tr><td>体重</td><td>非公開</td></tr>
+</table>
+[END]
+
+# おススメ動画
+## おススメ動画リンク集
+[START,card,link,youtube]
+[URL]https://www.youtube.com/watch?v=a8qZZAwMQAI
+[END]
+
+## おススメXリンク集
+[START,card,link,x]
+[URL]https://x.com/arnie_yield/status/2058099249519456377
+[END]
+
+# FA集
+## ペンギン体
+[START,card,fa_x]
+[URL]https://x.com/miku_n_2439/status/2056396158533332993
+[TXT]この画像はXXさんに頂いたFAです
+[END]
+
+## 人間体
+[START,card,fa_x]
+[URL]https://x.com/miku_n_2439/status/2056396158533332993
+[TXT]この画像はYYさんに頂いたFAです
+[END]
+
+# ポートフォリオ
+## 制作物
+[START,card,img_comment]
+[TITLE]お寿司だよ！ゆかっ狐集合！
+[IMG]./materials/img01.png
+[TXT]VTuber神楽月ゆか（ゆかち）のFAゲームです
+[URL]https://github.com/arnie-pj/yukachi-sushi
+[END]
