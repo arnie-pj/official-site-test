@@ -601,14 +601,20 @@ async function fetchX(url) {
   } catch { return {}; }
 }
 
-/** YouTubeタイトルを取得 (noembed) */
+/** YouTubeタイトルを取得 (noembed)
+ *  shorts / live / youtu.be 等は watch?v= 形式に正規化してから問い合わせる */
 const ytCache = {};
 async function fetchYT(url) {
   if (ytCache[url]) return ytCache[url];
   try {
-    const r = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+    const vid       = extractVideoId(url);
+    const normalUrl = vid ? `https://www.youtube.com/watch?v=${vid}` : url;
+    /* 正規化済みキャッシュが既にあれば元URLにも紐付けて返す */
+    if (ytCache[normalUrl]) { ytCache[url] = ytCache[normalUrl]; return ytCache[url]; }
+    const r = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(normalUrl)}`);
     const d = await r.json();
-    ytCache[url] = d;
+    ytCache[url]       = d;
+    ytCache[normalUrl] = d;
     return d;
   } catch { return {}; }
 }
@@ -1003,7 +1009,7 @@ function renderPages(data) {
      r  https://...   → 黒カード
      n  https://...   → 青カード
      rn https://...   → 黒青半々カード
-   記載順が古い順（配列先頭=最古）と想定し、表示時に逆順にする
+   記載順が新しい順（配列先頭=最新）。表示時はそのまま上から並べる
 ---------------------------------------------------------- */
 function parseDatabaseYt(text) {
   const items    = []; // { url, videoId, videoType, color }
@@ -1161,8 +1167,8 @@ async function buildVideoListPage(_data) {
     if (filtered.length === 0) { empty.style.display = 'block'; return; }
     empty.style.display = 'none';
 
-    /* 新しい順（配列末尾=最新） */
-    [...filtered].reverse().forEach((item, i) => {
+    /* 新しい順 = ファイル上から順（reverseしない） */
+    filtered.forEach((item, i) => {
       const wrapper  = document.createElement('div');
       const localIdx = vlCardIdx + i;
       wrapper.style.animationDelay = `${Math.min(i * 0.03, 0.6)}s`;
