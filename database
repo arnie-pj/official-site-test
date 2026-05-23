@@ -11,17 +11,6 @@
 </table>
 [END]
 
-# おススメ動画
-## おススメ動画リンク集
-[START,card,link,youtube]
-[URL]https://www.youtube.com/watch?v=a8qZZAwMQAI
-[END]
-
-## おススメXリンク集
-[START,card,link,x]
-[URL]https://x.com/arnie_yield/status/2058099249519456377
-[END]
-
 # FA集
 [START,wide,html]
 頂いたファンアート（FA）を掲載させて頂いています。いつも描いていただいてありがとうございます。本当に嬉しいんですよ！描いていただけるの！！
@@ -95,6 +84,10 @@
 
 
 # ポートフォリオ
+[START,wide,html]
+自分がこれまでに開発／作成・リリースしたものをまとめました！是非色々試してみてくださいね
+[END]
+
 ## 制作物
 
 [START,card,img_comment]
@@ -122,3 +115,16 @@
 [END]
 
 
+!!! ############################################
+!!! ここからメモで置いているもの
+!!! ############################################
+
+!!!# おススメ動画
+!!!## おススメ動画リンク集
+!!![START,card,link,youtube]
+!!![URL]https://www.youtube.com/watch?v=a8qZZAwMQAI
+!!![END]
+!!!## おススメXリンク集
+!!![START,card,link,x]
+!!![URL]https://x.com/arnie_yield/status/2058099249519456377
+!!![END]
