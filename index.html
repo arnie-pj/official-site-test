@@ -948,12 +948,13 @@ function renderPages(data) {
 ---------------------------------------------------------- */
 (async () => {
   const overlay = document.getElementById('loadingOverlay');
+  let data;
 
   try {
     const res = await fetch('./database');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
-    const data = parseDatabase(text);
+    data = parseDatabase(text);
     renderPages(data);
   } catch (err) {
     console.error('database 読み込みエラー:', err);
