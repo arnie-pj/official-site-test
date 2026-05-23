@@ -718,6 +718,8 @@ function parseDatabase(text) {
         currentCard.fields.IMG = line.replace('[IMG]','').trim();
       } else if (line.startsWith('[TITLE]')) {
         currentCard.fields.TITLE = line.replace('[TITLE]','').trim();
+      } else if (line.startsWith('[TAG]')) {
+        currentCard.fields.TAG = line.replace('[TAG]','').trim();
       } else if (line.startsWith('[VIDEO_TYPE]')) {
         currentCard.fields.VIDEO_TYPE = line.replace('[VIDEO_TYPE]','').trim(); // video / short / live
       } else if (currentCard.type === 'html') {
@@ -873,13 +875,14 @@ function buildCard(card, idx) {
     const txt   = fields.TXT   || '';
     const title = fields.TITLE || '';
     wrapper.className += ' card card-link';
+    const tag = fields.TAG || 'Portfolio';
     wrapper.innerHTML = `
       <div class="card-media">
         <div class="card-thumb-wrap">
           <img class="card-thumb" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
         </div>
         <div class="card-body">
-          <div class="card-label">Portfolio</div>
+          <div class="card-label">${esc(tag)}</div>
           ${title ? `<div class="card-title">${esc(title)}</div>` : ''}
           <div class="card-txt">${esc(txt)}</div>
         </div>

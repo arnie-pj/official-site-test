@@ -39,6 +39,15 @@
 # ポートフォリオ
 ## 制作物
 [START,card,img_comment]
+[TAG]ゲーム
+[TITLE]しかくくん！ジャンプする！！
+[IMG]./materials/img01.png
+[TXT]四角いキャラクター「しかくくん」をジャンプさせて出来る限り長く進み続けるゲームです。WindowsかPython＋OpenCV実行環境で動きます
+[URL]https://github.com/arnie-pj/shikaku-jump
+[END]
+
+[START,card,img_comment]
+[TAG]ファンゲーム
 [TITLE]お寿司だよ！ゆかっ狐集合！
 [IMG]./materials/img01.png
 [TXT]VTuber神楽月ゆか（ゆかち）のFAゲームです
