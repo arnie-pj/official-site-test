@@ -93,6 +93,18 @@ header {
   gap: 16px;
 }
 
+.header-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.header-logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .site-name {
   font-family: 'M PLUS 1 Code', monospace;
   font-weight: 900;
@@ -566,6 +578,9 @@ footer .footer-site {
 <header>
   <div class="site-name" id="siteName">Portfolio</div>
   <div class="nav-tabs" id="navTabs"></div>
+  <div class="header-logo" id="headerLogo" style="display:none">
+    <img id="headerLogoImg" src="" alt="logo">
+  </div>
 </header>
 
 <!-- ページコンテナ (JSで生成) -->
@@ -643,7 +658,7 @@ async function fetchYT(url) {
  */
 function parseDatabase(text) {
   const lines = text.split('\n');
-  const result = { siteName: 'Portfolio', footerText: '', pages: [] };
+  const result = { siteName: 'Portfolio', logoImg: '', footerText: '', pages: [] };
 
   let currentPage    = null;
   let currentSection = null;
@@ -673,6 +688,10 @@ function parseDatabase(text) {
     /* メタ指定 */
     if (line.startsWith('[SITE_NAME]')) {
       result.siteName = line.replace('[SITE_NAME]','').trim();
+      continue;
+    }
+    if (line.startsWith('[LOGO]')) {
+      result.logoImg = line.replace('[LOGO]','').trim();
       continue;
     }
     if (line.startsWith('[FOOTER]')) {
@@ -955,9 +974,18 @@ document.getElementById('lightbox').addEventListener('click', () => {
 function renderPages(data) {
   /* サイト名 */
   const sn = data.siteName || 'Portfolio';
-  document.title                         = sn;
+  document.title                                     = sn;
   document.getElementById('siteName').textContent   = sn;
   document.getElementById('footerSite').textContent = sn;
+
+  /* ロゴ */
+  if (data.logoImg) {
+    const logoWrap = document.getElementById('headerLogo');
+    const logoImg  = document.getElementById('headerLogoImg');
+    logoImg.src          = data.logoImg;
+    logoImg.alt          = sn;
+    logoWrap.style.display = 'flex';
+  }
   if (data.footerText) {
     document.getElementById('footerText').textContent = data.footerText;
   }
