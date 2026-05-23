@@ -1,14 +1,14 @@
 [SITE_NAME]Arnie Yield 公式サイト
 [FOOTER]created by Arnie Yield
 
-# メイン
-## Arnie Yield（アニー・イールド）プロフィール
+# 　
 [START,wide,html]
 <img src="./materials//top/top_img1.png"><br>
 兄のアニー・イールドと妹のアリー・イールドの2人チャンネル。大体兄が配信してます。<br>
 だいたい毎日23時から好評配信中！！
 [END]
 
+## Arnie Yield（アニー・イールド／兄）プロフィール
 [START,wide,html]
 <img src="./materials/main.png">
 <table>
@@ -16,6 +16,8 @@
 <tr><td>体重</td><td>非公開</td></tr>
 </table>
 [END]
+
+## Arie Yield（アリー・イールド／妹）プロフィール
 
 # FA集
 [START,wide,html]
