@@ -8,11 +8,32 @@
 だいたい毎日23時から好評配信中！！
 [END]
 
-[START,wide,html]
-リンクはこちら！<br>
-・<a href="https://www.youtube.com/@arnie-yield">🎥 YouTube</a><br>
-・<a href="https://x.com/arnie_yield">𝕏 X（旧Twitter）</a><br>
-・<a href="https://marshmallow-qa.com/arnie_yield">💌 マシュマロ</a><br>
+!!![START,wide,html]
+!!!リンクはこちら！<br>
+!!!・<a href="https://www.youtube.com/@arnie-yield">🎥 YouTube</a><br>
+!!!・<a href="https://x.com/arnie_yield">𝕏 X（旧Twitter）</a><br>
+!!!・<a href="https://marshmallow-qa.com/arnie_yield">💌 マシュマロ</a><br>
+!!![END]
+
+[START,card,link,general]
+[TITLE]YouTubeチャンネル
+[IMG]./materials/top/youtube.png
+[TXT]公式YouTubeチャンネルはこちら！
+[URL]https://www.youtube.com/@arnie-yield
+[END]
+
+[START,card,link,general]
+[TITLE]X（旧Twitter）
+[IMG]./materials/top/x.png
+[TXT]公式Xはこちら！
+[URL]https://x.com/arnie_yield
+[END]
+
+[START,card,link,general]
+[TITLE]YouTubeチャンネル
+[IMG]./materials/top/marshmallow.png
+[TXT]マシュマロ・お便りはこちらから！
+[URL]https://marshmallow-qa.com/arnie_yield
 [END]
 
 ## Arnie Yield（アニー・イールド／兄）プロフィール

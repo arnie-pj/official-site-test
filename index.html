@@ -327,6 +327,19 @@ header {
   border-radius: var(--radius-sm);
   background: var(--surface2);
 }
+.card-sq-wrap {
+  flex: 0 0 90px;
+  padding: 10px 0 10px 10px;
+  display: flex;
+  align-items: center;
+}
+.card-sq {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+}
 .card-x-wrap {
   flex: 0 0 120px;
   padding: 10px 0 10px 10px;
@@ -817,6 +830,28 @@ function buildCard(card, idx) {
       }
     })();
 
+    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    return wrapper;
+  }
+
+  /* ---- link/general ---- */
+  if (type === 'link' && subtype === 'general') {
+    const url   = fields.URL   || '#';
+    const img   = fields.IMG   || '';
+    const title = fields.TITLE || '';
+    const txt   = fields.TXT   || '';
+    wrapper.className += ' card card-link';
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-sq-wrap">
+          <img class="card-sq" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
+        </div>
+        <div class="card-body">
+          <div class="card-label">${esc(fields.TAG || 'Link')}</div>
+          ${title ? `<div class="card-title">${esc(title)}</div>` : ''}
+          ${txt   ? `<div class="card-txt">${esc(txt)}</div>`     : ''}
+        </div>
+      </div>`;
     wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
     return wrapper;
   }
