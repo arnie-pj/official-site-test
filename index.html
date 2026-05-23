@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arnie Yield 公式サイト</title>
+<title>ポートフォリオ</title>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
@@ -396,11 +396,101 @@ footer {
   font-size: 0.8rem;
 }
 footer .footer-site {
-  font-family: 'Zen Maru Gothic', sans-serif;
+  font-family: 'M PLUS 1 Code', monospace;
   font-size: 1.1rem;
   font-weight: 900;
   color: var(--accent);
   margin-bottom: 8px;
+}
+
+/* ============================================================
+   動画いちらんページ専用スタイル
+============================================================ */
+.vl-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+}
+
+/* 検索バー */
+.vl-search-row {
+  position: relative;
+  margin-bottom: 20px;
+}
+.vl-search-input {
+  width: 100%;
+  padding: 12px 48px 12px 18px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.vl-search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.vl-search-input::placeholder { color: var(--text3); }
+.vl-search-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* サブタブ */
+.vl-subtabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.vl-subtab {
+  padding: 6px 18px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.vl-subtab:hover { border-color: var(--accent); color: var(--accent); }
+.vl-subtab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+}
+
+/* 件数ラベル */
+.vl-count {
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+  min-height: 1.2em;
+}
+.vl-count em { color: var(--accent); font-style: normal; font-weight: 700; }
+
+/* 空状態 */
+.vl-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text3);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .vl-wrap { padding: 20px 12px 0; }
 }
 
 /* ============================================================
@@ -596,6 +686,8 @@ function parseDatabase(text) {
         currentCard.fields.IMG = line.replace('[IMG]','').trim();
       } else if (line.startsWith('[TITLE]')) {
         currentCard.fields.TITLE = line.replace('[TITLE]','').trim();
+      } else if (line.startsWith('[VIDEO_TYPE]')) {
+        currentCard.fields.VIDEO_TYPE = line.replace('[VIDEO_TYPE]','').trim(); // video / short / live
       } else if (currentCard.type === 'html') {
         htmlLines.push(rawLine); // html タイプはそのまま蓄積
       }
@@ -870,9 +962,196 @@ function renderPages(data) {
     return;
   }
 
+  /* 動画いちらんページを生成 */
+  buildVideoListPage(data);
+
   overlay.classList.add('hidden');
   setTimeout(() => overlay.remove(), 600);
 })();
+
+/* ----------------------------------------------------------
+   動画いちらんページ
+   databaseの link,youtube カードを VIDEO_TYPE 別に集約して表示
+   VIDEO_TYPE: video（省略時デフォルト）/ short / live
+---------------------------------------------------------- */
+function buildVideoListPage(data) {
+  const navTabs   = document.getElementById('navTabs');
+  const container = document.getElementById('pagesContainer');
+  const totalPages = container.querySelectorAll('.page').length;
+  const pageId     = `page-${totalPages}`;
+
+  /* ---- 全 youtube カードを収集 ---- */
+  const allYtCards = []; // { url, videoId, videoType }
+  data.pages.forEach(page => {
+    page.sections.forEach(section => {
+      section.cards.forEach(card => {
+        if (card.type === 'link' && card.subtype === 'youtube' && card.fields.URL) {
+          const m = card.fields.URL.match(/[?&]v=([^&\s]+)/);
+          if (m) {
+            allYtCards.push({
+              url:       card.fields.URL,
+              videoId:   m[1],
+              videoType: (card.fields.VIDEO_TYPE || 'video').toLowerCase(),
+            });
+          }
+        }
+      });
+    });
+  });
+
+  /* ---- タブボタン ---- */
+  const tab = document.createElement('button');
+  tab.className    = 'nav-tab';
+  tab.textContent  = '動画いちらん';
+  tab.dataset.page = pageId;
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(pageId).classList.add('active');
+  });
+  navTabs.appendChild(tab);
+
+  /* ---- ページ要素 ---- */
+  const pageEl     = document.createElement('div');
+  pageEl.className = 'page';
+  pageEl.id        = pageId;
+
+  /* ヒーロー */
+  const hero = document.createElement('div');
+  hero.className = 'page-hero';
+  hero.innerHTML = `<div class="page-hero-title">動画いちらん</div>
+    <div class="page-hero-sub">全 ${allYtCards.length} 件 — 新しい順に表示</div>`;
+  pageEl.appendChild(hero);
+
+  /* コンテンツラッパー */
+  const wrap = document.createElement('div');
+  wrap.className = 'vl-wrap';
+
+  /* 検索バー */
+  wrap.innerHTML = `
+    <div class="vl-search-row">
+      <input class="vl-search-input" id="vlSearch" type="search" placeholder="タイトルで検索..." autocomplete="off">
+      <span class="vl-search-icon">🔍</span>
+    </div>
+    <div class="vl-subtabs">
+      <button class="vl-subtab active" data-vtype="all">すべて</button>
+      <button class="vl-subtab" data-vtype="video">動画</button>
+      <button class="vl-subtab" data-vtype="short">ショート</button>
+      <button class="vl-subtab" data-vtype="live">配信</button>
+    </div>
+    <div class="vl-count" id="vlCount"></div>
+    <div class="cards-grid" id="vlGrid"></div>
+    <div class="vl-empty" id="vlEmpty" style="display:none;">該当する動画が見つかりませんでした</div>
+    <div class="page-bottom"></div>`;
+  pageEl.appendChild(wrap);
+  container.appendChild(pageEl);
+
+  /* ---- 状態 ---- */
+  let vlSubTab  = 'all';
+  let vlQuery   = '';
+  let vlCardIdx = 10000; // 他ページのidxと衝突しないよう大きめの開始値
+
+  /* ---- レンダリング関数 ---- */
+  function renderVL() {
+    const grid    = document.getElementById('vlGrid');
+    const empty   = document.getElementById('vlEmpty');
+    const countEl = document.getElementById('vlCount');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const q = vlQuery.trim().toLowerCase();
+
+    /* フィルタ */
+    let filtered = allYtCards.filter(item => {
+      /* サブタブフィルタ（allは全て通す） */
+      if (vlSubTab !== 'all' && item.videoType !== vlSubTab) return false;
+      /* 検索フィルタ */
+      if (q) {
+        const cached = ytCache[item.url] || {};
+        const title  = (cached.title || '').toLowerCase();
+        return title.includes(q);
+      }
+      return true;
+    });
+
+    /* 件数表示 */
+    const typeLabel = { all:'すべて', video:'動画', short:'ショート', live:'配信' }[vlSubTab];
+    if (q) {
+      countEl.innerHTML = `「<em>${esc(vlQuery)}</em>」の検索結果 — <em>${filtered.length}</em> 件`;
+    } else {
+      countEl.innerHTML = `${typeLabel} — <em>${filtered.length}</em> 件`;
+    }
+
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    /* カード描画（新しい順 = 配列末尾が最新なので逆順） */
+    [...filtered].reverse().forEach((item, i) => {
+      const wrapper   = document.createElement('div');
+      const localIdx  = vlCardIdx + i;
+      wrapper.style.animationDelay = `${Math.min(i * 0.03, 0.6)}s`;
+      wrapper.className = 'card card-link';
+
+      const typeTag = { video:'動画', short:'ショート', live:'配信' }[item.videoType] || 'YouTube';
+
+      wrapper.innerHTML = `
+        <div class="card-media">
+          <div class="card-thumb-wrap">
+            <img class="card-thumb" src="https://img.youtube.com/vi/${esc(item.videoId)}/mqdefault.jpg" alt="" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-label">${esc(typeTag)}</div>
+            <div class="card-title vl-title-${localIdx}">読み込み中...</div>
+          </div>
+        </div>`;
+
+      /* タイトル取得（キャッシュ優先） */
+      (async () => {
+        const d  = await fetchYT(item.url);
+        const el = wrapper.querySelector(`.vl-title-${localIdx}`);
+        if (el) {
+          el.textContent = d.title || item.url;
+          /* 検索中かつまだキャッシュになかった場合のみ再描画 */
+          if (vlQuery.trim() && d.title) {
+            vlCardIdx = 10000;
+            renderVL();
+          }
+        }
+      })();
+
+      wrapper.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
+      grid.appendChild(wrapper);
+    });
+
+    vlCardIdx += filtered.length;
+  }
+
+  /* ---- イベント（ページ生成後にバインド） ---- */
+  requestAnimationFrame(() => {
+    const searchEl = document.getElementById('vlSearch');
+    if (searchEl) {
+      searchEl.addEventListener('input', e => {
+        vlQuery = e.target.value;
+        vlCardIdx = 10000;
+        renderVL();
+      });
+    }
+    document.querySelectorAll('.vl-subtab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.vl-subtab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        vlSubTab  = btn.dataset.vtype;
+        vlCardIdx = 10000;
+        renderVL();
+      });
+    });
+    renderVL();
+  });
+}
 </script>
 </body>
 </html>
