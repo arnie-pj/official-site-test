@@ -489,6 +489,32 @@ footer .footer-site {
   font-size: 0.95rem;
 }
 
+/* 動画いちらん カード色バリアント */
+/* r: デフォルト黒 — .card そのまま */
+
+/* n: 青ベース（画像の #1769E8 系） */
+.card-vl-n {
+  background: #0e1e3a;
+  border-color: #1e4080;
+}
+.card-vl-n:hover {
+  border-color: #4a8af5;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(74,138,245,0.25);
+}
+.card-vl-n .card-label { color: #6aaaf8; }
+.card-vl-n .card-title { color: #cde0ff; }
+
+/* rn: 黒と青を半々に見せる左右グラデーション境界 */
+.card-vl-rn {
+  background: linear-gradient(105deg, #1a1a1a 50%, #0e1e3a 50%);
+  border-color: #2a3a5a;
+}
+.card-vl-rn:hover {
+  border-color: rgba(74,138,245,0.5);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(74,138,245,0.15);
+}
+.card-vl-rn .card-label { color: #a0c4ff; }
+
 @media (max-width: 640px) {
   .vl-wrap { padding: 20px 12px 0; }
 }
@@ -964,46 +990,90 @@ function renderPages(data) {
   }
 
   /* 動画いちらんページを生成 */
-  buildVideoListPage(data);
+  await buildVideoListPage(data);
 
   overlay.classList.add('hidden');
   setTimeout(() => overlay.remove(), 600);
 })();
 
 /* ----------------------------------------------------------
-   動画いちらんページ
-   databaseの link,youtube カードを VIDEO_TYPE 別に集約して表示
-   VIDEO_TYPE: video（省略時デフォルト）/ short / live
+   database_yt パーサー
+   フォーマット:
+     # カテゴリ名（動画 / ショート / 配信）
+     r  https://...   → 黒カード
+     n  https://...   → 青カード
+     rn https://...   → 黒青半々カード
+   記載順が古い順（配列先頭=最古）と想定し、表示時に逆順にする
 ---------------------------------------------------------- */
-function buildVideoListPage(data) {
-  const navTabs   = document.getElementById('navTabs');
-  const container = document.getElementById('pagesContainer');
+function parseDatabaseYt(text) {
+  const items    = []; // { url, videoId, videoType, color }
+  let   category = 'video'; // デフォルト
+
+  const categoryMap = {
+    '動画': 'video', 'video': 'video',
+    'ショート': 'short', 'short': 'short', 'shorts': 'short',
+    '配信': 'live', 'live': 'live',
+  };
+
+  for (const rawLine of text.split('\n')) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('//')) continue;
+
+    /* カテゴリ行: # 動画 */
+    if (line.startsWith('#')) {
+      const key = line.replace(/^#+\s*/, '').trim().toLowerCase();
+      category  = categoryMap[key] || 'video';
+      continue;
+    }
+
+    /* エントリ行: (r|n|rn) URL */
+    const m = line.match(/^(rn|r|n)\s+(https?:\/\/\S+)/i);
+    if (!m) continue;
+
+    const color = m[1].toLowerCase(); // 'r' | 'n' | 'rn'
+    const url   = m[2];
+    const vid   = extractVideoId(url);
+    if (!vid) continue;
+
+    items.push({ url, videoId: vid, videoType: category, color });
+  }
+  return items;
+}
+
+/* YouTube URLから videoId を抽出（各種形式に対応） */
+function extractVideoId(url) {
+  // youtu.be/XXXX
+  let m = url.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/);
+  if (m) return m[1];
+  // youtube.com/watch?v=XXXX
+  m = url.match(/[?&]v=([A-Za-z0-9_\-]{11})/);
+  if (m) return m[1];
+  // youtube.com/shorts/XXXX
+  m = url.match(/\/shorts\/([A-Za-z0-9_\-]{11})/);
+  if (m) return m[1];
+  // youtube.com/live/XXXX
+  m = url.match(/\/live\/([A-Za-z0-9_\-]{11})/);
+  if (m) return m[1];
+  // youtube.com/embed/XXXX
+  m = url.match(/\/embed\/([A-Za-z0-9_\-]{11})/);
+  if (m) return m[1];
+  return null;
+}
+
+/* ----------------------------------------------------------
+   動画いちらんページ
+   database_yt ファイルを読み込んで動画一覧を表示
+---------------------------------------------------------- */
+async function buildVideoListPage(_data) {
+  const navTabs    = document.getElementById('navTabs');
+  const container  = document.getElementById('pagesContainer');
   const totalPages = container.querySelectorAll('.page').length;
   const pageId     = `page-${totalPages}`;
 
-  /* ---- 全 youtube カードを収集 ---- */
-  const allYtCards = []; // { url, videoId, videoType }
-  data.pages.forEach(page => {
-    page.sections.forEach(section => {
-      section.cards.forEach(card => {
-        if (card.type === 'link' && card.subtype === 'youtube' && card.fields.URL) {
-          const m = card.fields.URL.match(/[?&]v=([^&\s]+)/);
-          if (m) {
-            allYtCards.push({
-              url:       card.fields.URL,
-              videoId:   m[1],
-              videoType: (card.fields.VIDEO_TYPE || 'video').toLowerCase(),
-            });
-          }
-        }
-      });
-    });
-  });
-
-  /* ---- タブボタン ---- */
+  /* ---- タブボタン（先に追加してページ切り替えを有効化） ---- */
   const tab = document.createElement('button');
-  tab.className    = 'nav-tab';
-  tab.textContent  = '動画いちらん';
+  tab.className   = 'nav-tab';
+  tab.textContent = '動画いちらん';
   tab.dataset.page = pageId;
   tab.addEventListener('click', () => {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1017,19 +1087,28 @@ function buildVideoListPage(data) {
   const pageEl     = document.createElement('div');
   pageEl.className = 'page';
   pageEl.id        = pageId;
+  container.appendChild(pageEl);
 
-  /* ヒーロー */
+  /* ---- database_yt 読み込み ---- */
+  let allYtCards = [];
+  try {
+    const res = await fetch('./database_yt');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    allYtCards = parseDatabaseYt(text);
+  } catch (err) {
+    console.warn('database_yt 読み込みエラー:', err);
+  }
+
+  /* ---- ページ内容を構築 ---- */
   const hero = document.createElement('div');
   hero.className = 'page-hero';
   hero.innerHTML = `<div class="page-hero-title">動画いちらん</div>
-    <div class="page-hero-sub">全 ${allYtCards.length} 件 — 新しい順に表示</div>`;
+    <div class="page-hero-sub" id="vlHeroSub">全 ${allYtCards.length} 件 — 新しい順に表示</div>`;
   pageEl.appendChild(hero);
 
-  /* コンテンツラッパー */
   const wrap = document.createElement('div');
   wrap.className = 'vl-wrap';
-
-  /* 検索バー */
   wrap.innerHTML = `
     <div class="vl-search-row">
       <input class="vl-search-input" id="vlSearch" type="search" placeholder="タイトルで検索..." autocomplete="off">
@@ -1046,12 +1125,14 @@ function buildVideoListPage(data) {
     <div class="vl-empty" id="vlEmpty" style="display:none;">該当する動画が見つかりませんでした</div>
     <div class="page-bottom"></div>`;
   pageEl.appendChild(wrap);
-  container.appendChild(pageEl);
 
   /* ---- 状態 ---- */
   let vlSubTab  = 'all';
   let vlQuery   = '';
-  let vlCardIdx = 10000; // 他ページのidxと衝突しないよう大きめの開始値
+  let vlCardIdx = 10000;
+
+  /* ---- カード色クラスのマップ ---- */
+  const colorClass = { r: '', n: 'card-vl-n', rn: 'card-vl-rn' };
 
   /* ---- レンダリング関数 ---- */
   function renderVL() {
@@ -1063,39 +1144,31 @@ function buildVideoListPage(data) {
 
     const q = vlQuery.trim().toLowerCase();
 
-    /* フィルタ */
-    let filtered = allYtCards.filter(item => {
-      /* サブタブフィルタ（allは全て通す） */
+    const filtered = allYtCards.filter(item => {
       if (vlSubTab !== 'all' && item.videoType !== vlSubTab) return false;
-      /* 検索フィルタ */
       if (q) {
         const cached = ytCache[item.url] || {};
-        const title  = (cached.title || '').toLowerCase();
-        return title.includes(q);
+        return (cached.title || '').toLowerCase().includes(q);
       }
       return true;
     });
 
-    /* 件数表示 */
     const typeLabel = { all:'すべて', video:'動画', short:'ショート', live:'配信' }[vlSubTab];
-    if (q) {
-      countEl.innerHTML = `「<em>${esc(vlQuery)}</em>」の検索結果 — <em>${filtered.length}</em> 件`;
-    } else {
-      countEl.innerHTML = `${typeLabel} — <em>${filtered.length}</em> 件`;
-    }
+    countEl.innerHTML = q
+      ? `「<em>${esc(vlQuery)}</em>」の検索結果 — <em>${filtered.length}</em> 件`
+      : `${typeLabel} — <em>${filtered.length}</em> 件`;
 
-    if (filtered.length === 0) {
-      empty.style.display = 'block';
-      return;
-    }
+    if (filtered.length === 0) { empty.style.display = 'block'; return; }
     empty.style.display = 'none';
 
-    /* カード描画（新しい順 = 配列末尾が最新なので逆順） */
+    /* 新しい順（配列末尾=最新） */
     [...filtered].reverse().forEach((item, i) => {
-      const wrapper   = document.createElement('div');
-      const localIdx  = vlCardIdx + i;
+      const wrapper  = document.createElement('div');
+      const localIdx = vlCardIdx + i;
       wrapper.style.animationDelay = `${Math.min(i * 0.03, 0.6)}s`;
-      wrapper.className = 'card card-link';
+
+      const extra = colorClass[item.color] || '';
+      wrapper.className = `card card-link${extra ? ' ' + extra : ''}`;
 
       const typeTag = { video:'動画', short:'ショート', live:'配信' }[item.videoType] || 'YouTube';
 
@@ -1110,18 +1183,13 @@ function buildVideoListPage(data) {
           </div>
         </div>`;
 
-      /* タイトル取得（キャッシュ優先） */
       (async () => {
         const d  = await fetchYT(item.url);
         const el = wrapper.querySelector(`.vl-title-${localIdx}`);
-        if (el) {
-          el.textContent = d.title || item.url;
-          /* 検索中かつまだキャッシュになかった場合のみ再描画 */
-          if (vlQuery.trim() && d.title) {
-            vlCardIdx = 10000;
-            renderVL();
-          }
-        }
+        if (!el) return;
+        el.textContent = d.title || item.url;
+        /* 検索中で新たにタイトルが判明したら再描画 */
+        if (vlQuery.trim() && d.title) { vlCardIdx = 10000; renderVL(); }
       })();
 
       wrapper.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
@@ -1131,7 +1199,7 @@ function buildVideoListPage(data) {
     vlCardIdx += filtered.length;
   }
 
-  /* ---- イベント（ページ生成後にバインド） ---- */
+  /* ---- イベントバインド ---- */
   requestAnimationFrame(() => {
     const searchEl = document.getElementById('vlSearch');
     if (searchEl) {
