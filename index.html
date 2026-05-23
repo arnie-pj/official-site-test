@@ -650,7 +650,12 @@ function parseDatabase(text) {
   }
 
   for (const rawLine of lines) {
-    const line = rawLine.trim();
+    /* 「!!!」以降をコメントとして除去（htmlタイプ内は除く） */
+    const stripped = inCard && currentCard?.type === 'html'
+      ? rawLine
+      : rawLine.replace(/!!!.*$/, '');
+    const line = stripped.trim();
+    if (!line) continue;
 
     /* メタ指定 */
     if (line.startsWith('[SITE_NAME]')) {
@@ -1033,8 +1038,8 @@ function parseDatabaseYt(text) {
   };
 
   for (const rawLine of text.split('\n')) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith('//')) continue;
+    const line = rawLine.replace(/!!!.*$/, '').trim();
+    if (!line) continue;
 
     /* カテゴリ行: # 動画 */
     if (line.startsWith('#')) {
