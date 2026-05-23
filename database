@@ -88,7 +88,36 @@
 自分がこれまでに開発／作成・リリースしたものをまとめました！是非色々試してみてくださいね
 [END]
 
-## 制作物
+[START,card,img_comment]
+[TAG]ファンサイト
+[TITLE]労働村の村人1さん 歌ってみた検索
+[IMG]./materials/portfolio/muraichi-utamita.png
+[TXT]ちょっとPONだけど歌枠はカッコいいむらいっちゃんこと、労働村の村人1さん。そんなむらいっちゃんのおうたをみんなで聞こう！
+[URL]https://arnie-pj.github.io/muraichi-utamita/
+[END]
+
+[START,card,img_comment]
+[TAG]ファンサイト
+[TITLE]照瑚なすさん 歌ってみた検索
+[IMG]./materials/portfolio/nasu-utamita.png
+[TXT]「1富士2鷹3茄子、いつかはなりたい1茄子」でおなじみ、バ美肉アンドロイドVtuber照瑚なすさんの歌声をもっと楽しもう！
+[URL]https://arnie-pj.github.io/nasu-utamita/
+[END]
+
+[START,card,img_comment]
+[TAG]ファンサイト
+[TITLE]ゆかちボタン
+[IMG]./materials/portfolio/yukachi-button.png
+[TXT]ゆかちの動画のチャット欄で言及されてたゆかちボタン、作っちゃいました。ボタンをタップしてゆかちの声を聞こう！
+[URL]https://arnie-pj.github.io/yukachi-button/
+[END]
+
+
+
+
+
+
+
 
 [START,card,img_comment]
 [TAG]ユーティリティ
