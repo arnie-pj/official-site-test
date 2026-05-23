@@ -1032,11 +1032,11 @@ function parseDatabaseYt(text) {
       continue;
     }
 
-    /* エントリ行: (r|n|rn) URL */
-    const m = line.match(/^(rn|r|n)\s+(https?:\/\/\S+)/i);
+    /* エントリ行: (r|n|nr) URL */
+    const m = line.match(/^(nr|r|n)\s+(https?:\/\/\S+)/i);
     if (!m) continue;
 
-    const color = m[1].toLowerCase(); // 'r' | 'n' | 'rn'
+    const color = m[1].toLowerCase(); // 'r' | 'n' | 'nr'
     const url   = m[2];
     const vid   = extractVideoId(url);
     if (!vid) continue;
@@ -1137,7 +1137,7 @@ async function buildVideoListPage(_data) {
   let vlQuery  = '';
 
   /* ---- カード色クラスのマップ ---- */
-  const colorClass = { r: '', n: 'card-vl-n', rn: 'card-vl-rn' };
+  const colorClass = { n: '', r: 'card-vl-n', nr: 'card-vl-rn' };
   const typeLabel  = { all:'すべて', video:'動画', short:'ショート', live:'配信' };
   const typeTag    = { video:'動画', short:'ショート', live:'配信' };
 
