@@ -97,6 +97,14 @@
 [END]
 
 [START,card,img_comment]
+[TAG]ユーティリティ
+[TITLE]推しが動いたぞ！（プロトタイプ）
+[IMG]./materials/icon_noimage.png
+[TXT]推しのLIVE配信が始まった際にデスクトップ上で通知が来るソフト
+[URL]https://github.com/arnie-pj/oshiugo
+[END]
+
+[START,card,img_comment]
 [TAG]ファンサイト
 [TITLE]照瑚なすさん 歌ってみた検索
 [IMG]./materials/portfolio/nasu-utamita.png
@@ -120,17 +128,12 @@
 [URL]https://github.com/arnie-pj/komekome
 [END]
 
-
-
-
-
-
 [START,card,img_comment]
 [TAG]ユーティリティ
 [TITLE]Retrogame Big Vision Viewer (RBV2)
 [IMG]./materials/portfolio/rbv2v2.png
 [TXT]レトロゲームのビジョンをビックに映すやつです。レトロゲーの画面を配信前提に綺麗に映します
-[URL]https://github.com/arnie-pj/retrogame-big-vision-viewer/tree/main
+[URL]https://github.com/arnie-pj/retrogame-big-vision-viewer/
 [END]
 
 [START,card,img_comment]
@@ -139,6 +142,14 @@
 [IMG]./materials/portfolio/shikaku-jump.png
 [TXT]四角いキャラクター「しかくくん」をジャンプさせて出来る限り長く進み続けるゲームです。WindowsかPython＋OpenCV実行環境で動きます
 [URL]https://github.com/arnie-pj/shikaku-jump
+[END]
+
+[START,card,img_comment]
+[TAG]ユーティリティ
+[TITLE]鼓膜カウンター
+[IMG]./materials/portfolio/komaku-counter.jpg
+[TXT]「鼓膜」の数を数えるやつ with 配信者シミュレータ
+[URL]https://github.com/arnie-pj/komaku-counter/
 [END]
 
 [START,card,img_comment]
