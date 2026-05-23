@@ -978,13 +978,13 @@ function renderPages(data) {
   document.getElementById('siteName').textContent   = sn;
   document.getElementById('footerSite').textContent = sn;
 
-  /* ロゴ */
+  /* ロゴ or サイト名（左上） */
+  const siteNameEl = document.getElementById('siteName');
   if (data.logoImg) {
-    const logoWrap = document.getElementById('headerLogo');
-    const logoImg  = document.getElementById('headerLogoImg');
-    logoImg.src          = data.logoImg;
-    logoImg.alt          = sn;
-    logoWrap.style.display = 'flex';
+    siteNameEl.innerHTML = `<img src="${data.logoImg}" alt="${esc(sn)}" style="height:36px;width:auto;object-fit:contain;display:block;">`;
+    document.getElementById('headerLogo').style.display = 'none';
+  } else {
+    document.getElementById('headerLogo').style.display = 'none';
   }
   if (data.footerText) {
     document.getElementById('footerText').textContent = data.footerText;
