@@ -161,7 +161,7 @@
 [START,card,img_comment]
 [TAG]ユーティリティ
 [TITLE]鼓膜カウンター
-[IMG]./materials/portfolio/komaku-counter.jpg
+[IMG]./materials/portfolio/komaku-counter.png
 [TXT]「鼓膜」の数を数えるやつ with 配信者シミュレータ
 [URL]https://github.com/arnie-pj/komaku-counter/
 [END]
