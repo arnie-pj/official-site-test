@@ -609,6 +609,17 @@ async function fetchX(url) {
   } catch { return {}; }
 }
 
+/** YouTubeのあらゆる形式のURLからvideoIdを抽出 */
+function extractVideoId(url) {
+  let m;
+  m = url.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/);    if (m) return m[1];
+  m = url.match(/[?&]v=([A-Za-z0-9_\-]{11})/);         if (m) return m[1];
+  m = url.match(/\/shorts\/([A-Za-z0-9_\-]{11})/);     if (m) return m[1];
+  m = url.match(/\/live\/([A-Za-z0-9_\-]{11})/);       if (m) return m[1];
+  m = url.match(/\/embed\/([A-Za-z0-9_\-]{11})/);      if (m) return m[1];
+  return null;
+}
+
 /** YouTubeタイトルを取得 (noembed)
  *  shorts / live / youtu.be 等は watch?v= 形式に正規化してから問い合わせる */
 const ytCache = {};
