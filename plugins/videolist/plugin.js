@@ -127,6 +127,12 @@ window.ArniePlugins.register({
     let vlQuery  = '';
 
     /* ---- renderVL（同期・キャッシュのみ参照） ---- */
+    function getTitle(item) {
+      /* videoIdから正規化URLを作り、そのキャッシュを優先して参照 */
+      const normalUrl = `https://www.youtube.com/watch?v=${item.videoId}`;
+      return ytCache[normalUrl]?.title || ytCache[item.url]?.title || '';
+    }
+
     function renderVL() {
       const grid    = container.querySelector('#vlGrid');
       const empty   = container.querySelector('#vlEmpty');
@@ -135,7 +141,7 @@ window.ArniePlugins.register({
       const q = vlQuery.trim().toLowerCase();
       const filtered = allYtCards.filter(item => {
         if (vlSubTab !== 'all' && item.videoType !== vlSubTab) return false;
-        if (q) return (ytCache[item.url]?.title || '').toLowerCase().includes(q);
+        if (q) return getTitle(item).toLowerCase().includes(q);
         return true;
       });
       countEl.innerHTML = q
@@ -146,7 +152,7 @@ window.ArniePlugins.register({
       while (grid.children.length > filtered.length) grid.removeChild(grid.lastChild);
 
       filtered.forEach((item, i) => {
-        const title = ytCache[item.url]?.title || item.url;
+        const title = getTitle(item) || item.url;
         const extra = colorClass[item.color] || '';
         const tag   = typeTag[item.videoType] || 'YouTube';
         if (existing[i] && existing[i].dataset.vid === item.videoId) {
@@ -175,11 +181,15 @@ window.ArniePlugins.register({
       empty.style.display = filtered.length === 0 ? 'block' : 'none';
     }
 
-    /* ---- プリフェッチ ---- */
+    /* ---- プリフェッチ：正規化URLで取得して確実にキャッシュ ---- */
     async function prefetchTitles() {
       const BATCH = 4;
       for (let i = 0; i < allYtCards.length; i += BATCH) {
-        await Promise.allSettled(allYtCards.slice(i,i+BATCH).map(item => fetchYT(item.url)));
+        await Promise.allSettled(
+          allYtCards.slice(i,i+BATCH).map(item =>
+            fetchYT(`https://www.youtube.com/watch?v=${item.videoId}`)
+          )
+        );
         renderVL();
         await new Promise(r => setTimeout(r, 120));
       }

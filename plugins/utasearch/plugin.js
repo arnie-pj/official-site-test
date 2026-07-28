@@ -89,10 +89,12 @@ window.ArniePlugins.register({
 
 /* ボディ */
 .us-body { flex:1; padding:8px 12px; display:flex; flex-direction:column; justify-content:center; min-width:0; }
-.us-title { font-size:1rem; font-weight:700; line-height:1.45; margin-bottom:5px; color:${THEME.text};
+.us-title { font-size:1rem; font-weight:700; line-height:1.45; margin-bottom:2px; color:${THEME.text};
   display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; word-break:break-all; }
+.us-artist { font-size:.8rem; color:${THEME.text2}; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .us-meta  { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 .us-ts    { font-size:.75rem; color:${THEME.text2}; font-variant-numeric:tabular-nums; }
+.us-date  { font-size:.72rem; color:${THEME.text2}; font-variant-numeric:tabular-nums; }
 .us-badge-vc { font-size:.68rem; padding:2px 7px; border-radius:20px; background:${THEME.badgeBg}; color:${THEME.badgeColor}; font-weight:600; }
 
 /* 空・エラー */
@@ -105,10 +107,10 @@ window.ArniePlugins.register({
 
     /* ---- パーサー ---- */
     function getVideoId(url) {
-      // youtu.be/XXXX
-      let m = url.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/); if (m) return m[1];
-      // watch?v=XXXX
-      m = url.match(/[?&]v=([A-Za-z0-9_\-]{11})/);          if (m) return m[1];
+      let m;
+      m = url.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/);  if (m) return m[1];
+      m = url.match(/[?&]v=([A-Za-z0-9_\-]{11})/);         if (m) return m[1];
+      m = url.match(/\/live\/([A-Za-z0-9_\-]{11})/);     if (m) return m[1];
       return null;
     }
     function tsToSeconds(ts) {
@@ -123,28 +125,51 @@ window.ArniePlugins.register({
         .replace(/＜[^\s]*/g, '')
         .trim() || raw.trim();
     }
+    /* 「曲名 / アーティスト名」を分離。「/」がなければ { song, artist:null } */
+    function parseSongTitle(raw) {
+      const idx = raw.indexOf(' / ');
+      if (idx === -1) return { song: raw.trim(), artist: null };
+      return { song: raw.slice(0, idx).trim(), artist: raw.slice(idx + 3).trim() };
+    }
+    const DATE_RE     = /^(\d{4}\/\d{2}\/\d{2})$/;
+    const DATE_URL_RE = /^(\d{4}\/\d{2}\/\d{2})\s+(https?:\/\/\S+)$/;
+    const TS_RE       = /^(\d+:\d+(?::\d+)?)\s+(.+)$/;
+    const DECO_RE     = /^[🐧🎵✨💫⭐🎤🍑🔊]+/u;
+
     function parseDb(text) {
       const lines = text.split('\n').map(l => l.trim());
       const mv = [], live = [], pending = [];
-      const TS_RE = /^(\d+:\d+(?::\d+)?)\s+(.+)$/;
-      let section = null, currentUrl = null, currentVc = false;
+      let section = null, currentUrl = null, currentVc = false, currentDate = null;
       for (const line of lines) {
         if (!line) continue;
-        if (line.includes('タイムスタンプ準備中')) { section='pending'; currentUrl=null; continue; }
-        if (line === '■Music Video')               { section='mv';      currentUrl=null; continue; }
-        if (line === '■歌ってみた枠')              { section='live';    currentUrl=null; continue; }
-        if (line.startsWith('https://')) {
-          currentUrl = line; currentVc = false;
-          if (section === 'mv') {
+        if (line.includes('タイムスタンプ準備中')) { section='pending'; currentUrl=null; currentDate=null; continue; }
+        if (line === '■Music Video')               { section='mv';      currentUrl=null; currentDate=null; continue; }
+        if (line === '■歌ってみた枠')              { section='live';    currentUrl=null; currentDate=null; continue; }
+        if (DECO_RE.test(line)) continue;
+        if (section === 'mv') {
+          const dm = DATE_URL_RE.exec(line);
+          if (dm) {
+            const vid = getVideoId(dm[2]);
+            if (vid) mv.push({ videoId:vid, url:dm[2], contentTitle:null, isVoicechanger:false, timestamp:null, date:dm[1] });
+            continue;
+          }
+          if (line.startsWith('https://')) {
             const vid = getVideoId(line);
-            if (vid) mv.push({ videoId:vid, url:line, contentTitle:null, isVoicechanger:false, timestamp:null });
-            currentUrl = null;
-          } else if (section === 'pending') {
+            if (vid) mv.push({ videoId:vid, url:line, contentTitle:null, isVoicechanger:false, timestamp:null, date:null });
+            continue;
+          }
+        }
+        if ((section === 'live' || section === 'pending') && line.startsWith('https://')) {
+          currentUrl = line; currentVc = false; currentDate = null;
+          if (section === 'pending') {
             const vid = getVideoId(line);
-            if (vid) pending.push({ videoId:vid, url:line, contentTitle:null, isVoicechanger:false, timestamp:null });
+            if (vid) pending.push({ videoId:vid, url:line, contentTitle:null, isVoicechanger:false, timestamp:null, date:null });
             currentUrl = null;
           }
           continue;
+        }
+        if (section === 'live' && currentUrl && DATE_RE.test(line)) {
+          currentDate = line; continue;
         }
         if (section === 'live' && line === 'ボイチェン') { currentVc = true; continue; }
         if (section === 'live' && currentUrl) {
@@ -158,6 +183,7 @@ window.ArniePlugins.register({
               contentTitle: cleanTitle(m[2]),
               isVoicechanger: currentVc,
               timestamp: m[1],
+              date: currentDate,
             });
           }
         }
@@ -219,18 +245,21 @@ window.ArniePlugins.register({
     /* ---- カード生成 ---- */
     function makeCard(item) {
       const info  = infoCache[item.videoId] || {};
-      const title = item.contentTitle || info.title || item.videoId;
+      const raw   = item.contentTitle || info.title || item.videoId;
+      const { song, artist } = parseSongTitle(raw);
       const isVC  = item.isVoicechanger;
       const a = document.createElement('a');
       a.className = `us-card ${isVC ? 'us-vc' : 'us-normal'}`;
       a.href = item.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
       a.innerHTML = `
         <div class="us-thumb-wrap">
-          <img class="us-thumb" src="https://img.youtube.com/vi/${esc(item.videoId)}/mqdefault.jpg" alt="${esc(title)}" loading="lazy">
+          <img class="us-thumb" src="https://img.youtube.com/vi/${esc(item.videoId)}/mqdefault.jpg" alt="${esc(song)}" loading="lazy">
         </div>
         <div class="us-body">
-          <div class="us-title">${esc(title)}</div>
+          <div class="us-title">${esc(song)}</div>
+          ${artist ? `<div class="us-artist">${esc(artist)}</div>` : ''}
           <div class="us-meta">
+            ${item.date      ? `<span class="us-date">${esc(item.date)}</span>` : ''}
             ${item.timestamp ? `<span class="us-ts">${esc(item.timestamp)}</span>` : ''}
             ${isVC           ? `<span class="us-badge-vc">ボイチェン</span>` : ''}
           </div>
