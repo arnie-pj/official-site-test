@@ -328,6 +328,12 @@ header {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* fa_x専用: 全文表示・省略なし */
+.card-txt-fax {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
 
 /* ============================================================
    TYPE: link/x
@@ -540,6 +546,29 @@ footer .footer-site {
 }
 .card-vl-rn .card-label { color: #a0c4ff; }
 
+/* c: コラボ（暗めピンク） */
+.card-vl-c {
+  background: #2a0e1e;
+  border-color: #6b2040;
+}
+.card-vl-c:hover {
+  border-color: #c05080;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(192,80,128,0.25);
+}
+.card-vl-c .card-label { color: #e080a8; }
+.card-vl-c .card-title { color: #f0c8d8; }
+
+/* nc: 黒とピンクを半々 */
+.card-vl-nc {
+  background: linear-gradient(105deg, #1a1a1a 50%, #2a0e1e 50%);
+  border-color: #4a2035;
+}
+.card-vl-nc:hover {
+  border-color: rgba(192,80,128,0.5);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(192,80,128,0.15);
+}
+.card-vl-nc .card-label { color: #e080a8; }
+
 @media (max-width: 640px) {
   .vl-wrap { padding: 20px 12px 0; }
 }
@@ -616,6 +645,96 @@ function ytThumb(url) {
   const m = url.match(/[?&]v=([^&\s]+)/);
   return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : '';
 }
+
+/* ----------------------------------------------------------
+   共通タブ切り替え
+   pageId: 表示するページのid属性値（例: 'page-0', 'page-5'）
+---------------------------------------------------------- */
+function switchTab(pageId) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const targetTab  = document.querySelector(`.nav-tab[data-page="${pageId}"]`);
+  const targetPage = document.getElementById(pageId);
+  if (targetTab)  targetTab.classList.add('active');
+  if (targetPage) targetPage.classList.add('active');
+}
+
+/*
+==============================================================
+  DATABASE / DATABASE_YT 仕様まとめ
+==============================================================
+
+【database ファイル】
+
+  ■ メタ指定（ファイル先頭付近に記載）
+    [SITE_NAME]テキスト      サイト名（タブタイトル・ヘッダー）
+    [LOGO]パス or URL        ヘッダー左上ロゴ画像（省略でテキスト表示）
+    [FOOTER]テキスト         フッタークレジット
+
+  ■ ページ・セクション
+    # タイトル               タブ追加（ページ）
+    #[NoPageTitle] タイトル  タブは表示するがページ内タイトルは非表示
+    ## 見出し                ページ内セクション見出し
+
+  ■ 共通フィールド（1a: 載せる情報の取捨選択と指定）
+    [TAG]テキスト            カード左上のラベル（省略でデフォルト値）
+    [TITLE]テキスト          太字タイトル
+    [TXT]テキスト            本文テキスト
+    [IMG]パス or URL         画像
+    [URL]URL                 リンク先
+
+  ■ カード種別（1b: サイズとレイアウトの指定）
+    [START, サイズ, 種別]
+    [START, サイズ, 種別, サブ種別]
+
+    サイズ:
+      wide  ページ横幅いっぱい
+      card  グリッド内の1カード（約1/3幅）
+
+    種別:
+      html            生HTMLをそのまま表示（フィールドでなくブロック内に記述）
+      thumb           横長サムネ（16:9）＋タイトル＋本文
+      thumb,youtube   thumbの派生。[URL]からYouTubeサムネ・タイトルを自動取得
+      square          正方形サムネ＋タイトル＋本文
+      square,x        squareの派生。[IMG]省略時にXポストの画像・タイトルを自動取得
+      fa              正方形サムネ＋本文（全文）＋虫眼鏡ボタン
+      fa,x            faの派生。[IMG]省略時にXポストの画像を自動取得
+
+    後方互換（旧→新に内部変換済みのため引き続き使用可）:
+      link,youtube → thumb,youtube
+      link,x       → square,x
+      link,general → square
+      img_comment  → thumb
+      fa_x         → fa,x
+
+  ■ コメント
+    !!! 以降の文字列はコメントとして無視（htmlブロック内を除く）
+
+--------------------------------------------------------------
+
+【database_yt ファイル】
+
+  ■ カテゴリ指定
+    # 動画 / # ショート / # 配信
+
+  ■ エントリ（1行1動画）
+    n  URL   通常（黒カード）
+    r  URL   投稿者以外が関わる（青カード）
+    c  URL   コラボ（暗めピンクカード）
+    nr URL   nかつr（黒青グラデーション）
+    nc URL   nかつc（黒ピンクグラデーション）
+
+  ■ 対応URLフォーマット
+    https://youtu.be/XXXXX
+    https://www.youtube.com/watch?v=XXXXX
+    https://youtube.com/shorts/XXXXX
+    https://www.youtube.com/live/XXXXX
+
+  ■ コメント
+    !!! 以降の文字列はコメントとして無視
+
+==============================================================
+*/
 
 /** X投稿URLから埋め込みデータを取得 (noembed) */
 const xCache = {};
@@ -702,7 +821,10 @@ function parseDatabase(text) {
     /* ページ切り替え: # タイトル */
     if (/^#\s+/.test(line) && !line.startsWith('##')) {
       finalizeCard();
-      currentPage = { title: line.replace(/^#\s+/,''), sections: [] };
+      const rawTitle    = line.replace(/^#\s+/,'');
+      const noPageTitle = rawTitle.includes('[NoPageTitle]');
+      const title       = rawTitle.replace('[NoPageTitle]','').trim();
+      currentPage = { title, noPageTitle, sections: [] };
       result.pages.push(currentPage);
       currentSection = null;
       continue;
@@ -771,6 +893,8 @@ function parseDatabase(text) {
 
 /* ----------------------------------------------------------
    CARD BUILDERS
+   カード種別（1b）: html / thumb / square / fa
+   共通フィールド（1a）: TAG TITLE TXT IMG URL
 ---------------------------------------------------------- */
 
 function buildCard(card, idx) {
@@ -783,8 +907,22 @@ function buildCard(card, idx) {
 
   const { type, subtype, fields } = card;
 
+  /* --------------------------------------------------
+     後方互換マッピング
+     旧カード種別 → 新カード種別に内部変換
+  -------------------------------------------------- */
+  let resolvedType    = type;
+  let resolvedSubtype = subtype;
+
+  // 旧: link,youtube / link,x / link,general / img_comment / fa_x
+  if (type === 'link' && subtype === 'youtube')  { resolvedType = 'thumb';  resolvedSubtype = 'youtube'; }
+  if (type === 'link' && subtype === 'x')        { resolvedType = 'square'; resolvedSubtype = 'x'; }
+  if (type === 'link' && subtype === 'general')  { resolvedType = 'square'; resolvedSubtype = ''; }
+  if (type === 'img_comment')                    { resolvedType = 'thumb';  resolvedSubtype = ''; }
+  if (type === 'fa_x')                           { resolvedType = 'fa';     resolvedSubtype = 'x'; }
+
   /* ---- html ---- */
-  if (type === 'html') {
+  if (resolvedType === 'html') {
     wrapper.className += ' card';
     const inner = document.createElement('div');
     inner.className = 'card-html';
@@ -793,114 +931,105 @@ function buildCard(card, idx) {
     return wrapper;
   }
 
-  /* ---- link/youtube ---- */
-  if (type === 'link' && subtype === 'youtube') {
-    const url   = fields.URL || '';
-    const thumb = ytThumb(url);
+  /* ---- thumb: 横長サムネ（16:9）＋テキスト ---- */
+  if (resolvedType === 'thumb') {
+    const url   = fields.URL   || '#';
+    const title = fields.TITLE || '';
+    const txt   = fields.TXT   || '';
+    const img   = fields.IMG   || (resolvedSubtype === 'youtube' ? ytThumb(url) : '');
+    const label = fields.TAG   || (resolvedSubtype === 'youtube' ? 'YouTube' : 'Link');
+
     wrapper.className += ' card card-link';
-    wrapper.setAttribute('data-href', url);
     wrapper.innerHTML = `
       <div class="card-media">
         <div class="card-thumb-wrap">
-          <img class="card-thumb" src="${esc(thumb)}" alt="" loading="lazy">
+          <img class="card-thumb thumb-img-${idx}" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
         </div>
         <div class="card-body">
-          <div class="card-label">${esc(fields.TAG || 'YouTube')}</div>
-          <div class="card-title yt-title-${idx}">読み込み中...</div>
+          <div class="card-label">${esc(label)}</div>
+          <div class="card-title thumb-title-${idx}">${esc(title) || (resolvedSubtype === 'youtube' ? '読み込み中...' : '')}</div>
+          ${txt ? `<div class="card-txt">${esc(txt)}</div>` : ''}
         </div>
       </div>`;
 
-    /* YouTube タイトルを非同期取得 */
-    (async () => {
-      const d = await fetchYT(url);
-      const el = wrapper.querySelector(`.yt-title-${idx}`);
-      if (el) el.textContent = d.title || url;
-    })();
+    /* YouTubeはタイトルを非同期取得 */
+    if (resolvedSubtype === 'youtube') {
+      (async () => {
+        const d  = await fetchYT(url);
+        const el = wrapper.querySelector(`.thumb-title-${idx}`);
+        if (el && !fields.TITLE) el.textContent = d.title || url;
+      })();
+    }
 
-    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    if (url !== '#') wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
     return wrapper;
   }
 
-  /* ---- link/x ---- */
-  if (type === 'link' && subtype === 'x') {
-    const url = fields.URL || '';
-    wrapper.className += ' card card-link';
-    wrapper.setAttribute('data-href', url);
-    wrapper.innerHTML = `
-      <div class="card-media">
-        <div class="card-x-wrap">
-          <img class="card-x-img x-img-${idx}" src="" alt="" loading="lazy" style="display:none">
-        </div>
-        <div class="card-body">
-          <div class="card-label">${esc(fields.TAG || '𝕏 Post')}</div>
-          <div class="card-title x-txt-${idx}">読み込み中...</div>
-        </div>
-      </div>`;
-
-    (async () => {
-      const d     = await fetchX(url);
-      const imgEl = wrapper.querySelector(`.x-img-${idx}`);
-      const txtEl = wrapper.querySelector(`.x-txt-${idx}`);
-      if (txtEl) txtEl.textContent = d.title || url;
-      const imgSrc = fields.IMG || d.thumbnail_url || '';
-      if (imgEl && imgSrc) {
-        imgEl.src           = imgSrc;
-        imgEl.style.display = 'block';
-      }
-    })();
-
-    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
-    return wrapper;
-  }
-
-  /* ---- link/general ---- */
-  if (type === 'link' && subtype === 'general') {
+  /* ---- square: 正方形サムネ＋テキスト ---- */
+  if (resolvedType === 'square') {
     const url   = fields.URL   || '#';
-    const img   = fields.IMG   || '';
     const title = fields.TITLE || '';
     const txt   = fields.TXT   || '';
-    wrapper.className += ' card card-link';
-    wrapper.innerHTML = `
-      <div class="card-media">
-        <div class="card-sq-wrap">
-          <img class="card-sq" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
-        </div>
-        <div class="card-body">
-          <div class="card-label">${esc(fields.TAG || 'Link')}</div>
-          ${title ? `<div class="card-title">${esc(title)}</div>` : ''}
-          ${txt   ? `<div class="card-txt">${esc(txt)}</div>`     : ''}
-        </div>
-      </div>`;
-    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
-    return wrapper;
-  }
+    const label = fields.TAG   || (resolvedSubtype === 'x' ? '𝕏 Post' : 'Link');
 
-  /* ---- fa_x ---- */
-  if (type === 'fa_x') {
-    const url = fields.URL || '';
-    const txt = fields.TXT || '';
     wrapper.className += ' card card-link';
     wrapper.innerHTML = `
       <div class="card-media">
         <div class="card-x-wrap">
-          <img class="card-x-img fax-img-${idx}" src="" alt="" loading="lazy" style="display:none">
+          <img class="card-x-img sq-img-${idx}" src="${esc(fields.IMG || '')}" alt="${esc(title)}" loading="lazy"${fields.IMG ? '' : ' style="display:none"'}>
         </div>
         <div class="card-body">
-          <div class="card-label">${esc(fields.TAG || 'Fan Art')}</div>
-          <div class="card-title">${esc(txt)}</div>
+          <div class="card-label">${esc(label)}</div>
+          ${title ? `<div class="card-title sq-title-${idx}">${esc(title)}</div>`
+                  : `<div class="card-title sq-title-${idx}">${resolvedSubtype === 'x' ? '読み込み中...' : ''}</div>`}
+          ${txt ? `<div class="card-txt">${esc(txt)}</div>` : ''}
+        </div>
+      </div>`;
+
+    /* X投稿はタイトル・サムネを非同期取得（[IMG]未指定時のみ） */
+    if (resolvedSubtype === 'x') {
+      (async () => {
+        const d     = await fetchX(url);
+        const imgEl = wrapper.querySelector(`.sq-img-${idx}`);
+        const txtEl = wrapper.querySelector(`.sq-title-${idx}`);
+        if (txtEl && !fields.TITLE) txtEl.textContent = d.title || url;
+        const imgSrc = fields.IMG || d.thumbnail_url || '';
+        if (imgEl && imgSrc) { imgEl.src = imgSrc; imgEl.style.display = 'block'; }
+      })();
+    }
+
+    if (url !== '#') wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+    return wrapper;
+  }
+
+  /* ---- fa: 正方形サムネ＋全文TXT＋虫眼鏡ボタン ---- */
+  if (resolvedType === 'fa') {
+    const url   = fields.URL || '';
+    const txt   = fields.TXT || '';
+    const label = fields.TAG || 'Fan Art';
+
+    wrapper.className += ' card card-link';
+    wrapper.innerHTML = `
+      <div class="card-media">
+        <div class="card-x-wrap">
+          <img class="card-x-img fa-img-${idx}" src="" alt="" loading="lazy" style="display:none">
+        </div>
+        <div class="card-body">
+          <div class="card-label">${esc(label)}</div>
+          <div class="card-txt card-txt-fax">${esc(txt)}</div>
           <div class="card-fax-actions">
             <button class="btn-zoom" data-idx="${idx}">🔍 画像を拡大</button>
           </div>
         </div>
       </div>`;
 
-    /* [IMG]フィールドがあれば即時表示、なければnoembedを試みる */
-    const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
+    /* [IMG]があれば即表示、なければX（subtype=x）から取得 */
+    const imgEl = wrapper.querySelector(`.fa-img-${idx}`);
     if (fields.IMG) {
       imgEl.src           = fields.IMG;
       imgEl.style.display = 'block';
       imgEl.dataset.full  = fields.IMG;
-    } else {
+    } else if (resolvedSubtype === 'x') {
       (async () => {
         const d = await fetchX(url);
         if (imgEl && d.thumbnail_url) {
@@ -911,43 +1040,15 @@ function buildCard(card, idx) {
       })();
     }
 
-    /* カードクリックでリンクへ */
     wrapper.addEventListener('click', e => {
-      if (e.target.closest('.btn-zoom')) return; // ボタンはここで止める
+      if (e.target.closest('.btn-zoom')) return;
       window.open(url, '_blank', 'noopener');
     });
-
-    /* 虫眼鏡ボタン → ライトボックス */
     wrapper.querySelector('.btn-zoom').addEventListener('click', e => {
       e.stopPropagation();
-      const imgEl = wrapper.querySelector(`.fax-img-${idx}`);
       openLightbox(imgEl ? (imgEl.dataset.full || imgEl.src) : '');
     });
 
-    return wrapper;
-  }
-
-  /* ---- img_comment ---- */
-  if (type === 'img_comment') {
-    const url   = fields.URL   || '#';
-    const img   = fields.IMG   || '';
-    const txt   = fields.TXT   || '';
-    const title = fields.TITLE || '';
-    wrapper.className += ' card card-link';
-    const tag = fields.TAG || 'Portfolio';
-    wrapper.innerHTML = `
-      <div class="card-media">
-        <div class="card-thumb-wrap">
-          <img class="card-thumb" src="${esc(img)}" alt="${esc(title)}" loading="lazy">
-        </div>
-        <div class="card-body">
-          <div class="card-label">${esc(tag)}</div>
-          ${title ? `<div class="card-title">${esc(title)}</div>` : ''}
-          <div class="card-txt">${esc(txt)}</div>
-        </div>
-      </div>`;
-
-    wrapper.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
     return wrapper;
   }
 
@@ -986,6 +1087,9 @@ function renderPages(data) {
   } else {
     document.getElementById('headerLogo').style.display = 'none';
   }
+  /* クリックで最初のタブ（page-0）へ */
+  siteNameEl.style.cursor = 'pointer';
+  siteNameEl.addEventListener('click', () => switchTab('page-0'));
   if (data.footerText) {
     document.getElementById('footerText').textContent = data.footerText;
   }
@@ -1003,12 +1107,7 @@ function renderPages(data) {
     tab.className   = 'nav-tab' + (pi === 0 ? ' active' : '');
     tab.textContent = page.title;
     tab.dataset.page = pi;
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(`page-${pi}`).classList.add('active');
-    });
+    tab.addEventListener('click', () => switchTab(`page-${pi}`));
     navTabs.appendChild(tab);
 
     /* ページ要素 */
@@ -1019,7 +1118,9 @@ function renderPages(data) {
     /* ページヒーロー */
     const hero = document.createElement('div');
     hero.className = 'page-hero';
-    hero.innerHTML = `<div class="page-hero-title">${esc(page.title)}</div>`;
+    if (!page.noPageTitle) {
+      hero.innerHTML = `<div class="page-hero-title">${esc(page.title)}</div>`;
+    }
     pageEl.appendChild(hero);
 
     let cardIdx = 0;
@@ -1111,8 +1212,8 @@ function parseDatabaseYt(text) {
       continue;
     }
 
-    /* エントリ行: (r|n|nr) URL */
-    const m = line.match(/^(nr|r|n)\s+(https?:\/\/\S+)/i);
+    /* エントリ行: (nr|nc|r|n|c) URL */
+    const m = line.match(/^(nr|nc|r|n|c)\s+(https?:\/\/\S+)/i);
     if (!m) continue;
 
     const color = m[1].toLowerCase(); // 'r' | 'n' | 'nr'
@@ -1160,12 +1261,7 @@ async function buildVideoListPage(_data) {
   tab.className   = 'nav-tab';
   tab.textContent = '動画いちらん';
   tab.dataset.page = pageId;
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(pageId).classList.add('active');
-  });
+  tab.addEventListener('click', () => switchTab(pageId));
   navTabs.appendChild(tab);
 
   /* ---- ページ要素 ---- */
@@ -1201,9 +1297,9 @@ async function buildVideoListPage(_data) {
     </div>
     <div class="vl-subtabs">
       <button class="vl-subtab active" data-vtype="all">すべて</button>
-      <button class="vl-subtab" data-vtype="video">動画</button>
-      <button class="vl-subtab" data-vtype="short">ショート</button>
       <button class="vl-subtab" data-vtype="live">配信</button>
+      <button class="vl-subtab" data-vtype="short">ショート</button>
+      <button class="vl-subtab" data-vtype="video">動画</button>
     </div>
     <div class="vl-count" id="vlCount"></div>
     <div class="cards-grid" id="vlGrid"></div>
@@ -1216,7 +1312,7 @@ async function buildVideoListPage(_data) {
   let vlQuery  = '';
 
   /* ---- カード色クラスのマップ ---- */
-  const colorClass = { n: '', r: 'card-vl-n', nr: 'card-vl-rn' };
+  const colorClass = { n: '', r: 'card-vl-n', nr: 'card-vl-rn', c: 'card-vl-c', nc: 'card-vl-nc' };
   const typeLabel  = { all:'すべて', video:'動画', short:'ショート', live:'配信' };
   const typeTag    = { video:'動画', short:'ショート', live:'配信' };
 

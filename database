@@ -2,50 +2,102 @@
 [LOGO]./materials/logo/arnie-logo.png
 [FOOTER]created by Arnie Yield
 
-# TOP
+# TOP[NoPageTitle]
 [START,wide,html]
-<img src="./materials//top/top_img1.png"><br>
-兄のアニー・イールドと妹のアリー・イールドの2人チャンネル。大体兄が配信してます。<br>
-だいたい毎日23時から好評配信中！！
+<img src="./materials//top/top_img2b.png"><br>
+才知！秀才！聡明！<br>
+全力！斬新！実直！<br>
+システム開発の出来るペンギンから転生したVTuber！アニー・イールドです！！<br>
+<br>
+毎日夜23時から配信中！<br>
+ゲーム配信とプログラム配信がメインコンテンツ<br>
+良かったら遊びに来てね<br>
 [END]
 
-!!![START,wide,html]
-!!!リンクはこちら！<br>
-!!!・<a href="https://www.youtube.com/@arnie-yield">🎥 YouTube</a><br>
-!!!・<a href="https://x.com/arnie_yield">𝕏 X（旧Twitter）</a><br>
-!!!・<a href="https://marshmallow-qa.com/arnie_yield">💌 マシュマロ</a><br>
-!!![END]
+## 週間スケジュール
+[START,wide,html]
+⚡7/28(火) 23時  コープスパーティ <br>
+⚡7/29(水) 23時  なにかやる！ <br>
+⚡7/30(木) 23時  なにかやる！ <br>
+⚡7/31(金) 21時  6人コラボ！全員一致クイズ！ <br>
+💧8/1(土)   （おやすみ） <br>
+⚡8/2(日) 21時  アソビ大全！あにほし村で真剣勝負！ <br>
+<hr color="gray">
+⚡8/9(日) 17:40～  真夏のフレッシュ歌枠リレー <br>
+<hr color="gray">
+⚡8/23(日) (時間未定)  Half Anniversary 特別配信
+[END]
 
-[START,card,link,general]
+## ハッシュタグいちらん
+[START,wide,html]
+<table border="0">
+<tr><td><font color="white">ファンアート</font></td><td>#イールドイーラスト</td></tr>
+<tr><td>ファンアートR-18</td><td>#イールドイーRスト</td></tr>
+<tr><td>配信</td><td>#イールドストリーム</td></tr>
+<tr><td>曲紹介</td><td>#アニーおすすめの1曲</td></tr>
+<tr><td>ファンコンテンツ</td><td>#イールドメイド</td></tr>
+<tr><td>総合</td><td>#アニー・イールド / #アリー・イールド</td></tr>
+</table>
+[END]
+
+## ファンマーク
+[START,wide,html]
+⚡🐧💧<br>
+<br>
+【由来】<br>
+⚡：プログラミングによるシステム開発できるイメージから<br>
+🐧：ペンギンから転生しました！<br>
+💧：転生前の姿「アニペン」、涙目なんです
+[END]
+
+## リンク集
+[START,card,square]
 [TITLE]YouTubeチャンネル
 [IMG]./materials/top/youtube.png
 [TXT]公式YouTubeチャンネルはこちら！
 [URL]https://www.youtube.com/@arnie-yield
 [END]
 
-[START,card,link,general]
+[START,card,square]
 [TITLE]X（旧Twitter）
 [IMG]./materials/top/x.png
 [TXT]公式Xはこちら！
 [URL]https://x.com/arnie_yield
 [END]
 
-[START,card,link,general]
+[START,card,square]
 [TITLE]マシュマロ
 [IMG]./materials/top/marshmallow.png
 [TXT]マシュマロ・お便りはこちらから！
 [URL]https://marshmallow-qa.com/arnie_yield
 [END]
 
-!!!## Arnie Yield（アニー・イールド／兄）プロフィール
-!!![START,wide,html]
-!!!<img src="./materials/top/arnie1.png">
-!!![END]
+[START,card,square]
+[TITLE]ゲームリスト
+[IMG]./materials/top/game.png
+[TXT]配信でみんなに聞いたゲームのリスト
+[URL]https://docs.google.com/spreadsheets/d/1TbQt_VOthriesf0XdxbCKQySNJum3wVMi8MKCESr2kg/edit?usp=sharing
+[END]
 
-!!!## Arie Yield（アリー・イールド／妹）プロフィール
-!!![START,wide,html]
-!!!<img src="./materials/top/arie1.png">
-!!![END]
+[START,card,square]
+[TITLE]アニーおすすめの1曲
+[IMG]./materials/top/music.png
+[TXT]「おはようVTuber」として毎朝1曲ずつXでオススメ曲を紹介してます。プレイリストはこちらから！
+[URL]https://youtube.com/playlist?list=PLKB9hfkEJWRWdaoeN8z0JMC7zX3ZoJCDl
+[END]
+
+!!! ## Arnie Yield（アニー・イールド／兄）プロフィール
+!!! [START,wide,html]
+!!! <img src="./materials/top/arnie1.png">
+!!! [END]
+
+!!! ## Arie Yield（アリー・イールド／妹）プロフィール
+!!! [START,wide,html]
+!!! <img src="./materials/top/arie1.png">
+!!! [END]
+
+!!! # 配信スケジュール
+
 
 # FA集
 [START,wide,html]
@@ -53,65 +105,189 @@
 [END]
 
 ## アニー・イールド
-[START,card,fa_x]
+
+[START,card,fa,x]
+[TAG]ろろさん @hiro_rogi_otk
+[URL]https://x.com/hiro_rogi_otk/status/2079200117337559545?s=20
+[IMG]https://pbs.twimg.com/media/HNrNfFgaEAAaJzF?format=jpg&name=large
+[TXT]いつものパーカー姿の僕と大切で大好きな同居人ことクロを、こんなに綺麗に、幻想的にお絵描きして貰いました。クロと自分のポーズが大好き！いつまでもクロと一緒に過ごせますように...
+[END]
+
+[START,card,fa,x]
+[TAG]明火さん @degarasi_akr
+[URL]https://x.com/degarasi_akr/status/2078899457715003630?s=20
+[IMG]https://pbs.twimg.com/media/HNm7qwBbsAAwDRk?format=jpg&name=4096x4096
+[TXT]ごんちゃんこと「玖栖莉かねごん」ちゃんとのコラボで来たお揃いお洋服のイラストを頂きました！照れながら「にゃー」と言っている一幕とのこと。
+[END]
+
+[START,card,fa,x]
+[TAG]ろろさん @hiro_rogi_otk
+[URL]https://x.com/hiro_rogi_otk/status/2077044089271501159?s=20
+[IMG]https://pbs.twimg.com/media/HNMklzWbEAAJ-UA?format=jpg&name=large
+[TXT]女児服を着た時の自分です。当日この衣装は流石に恥ずかしかったな。ろろさんのピンクサインが髪飾りみたいになってて好きです！
+[END]
+
+[START,card,fa,x]
+[TAG]星空ほしなちゃん @if_q1q
+[URL]https://x.com/if_q1q/status/2075806263817146449?s=20
+[IMG]https://pbs.twimg.com/media/HM6-y5laIAAC0P8?format=jpg&name=large
+[TXT]身長180cm、24歳の夢にだけ現れる自分こと「夢アニー」のイラストを描いてくれました！いつかまた皆さんの前に現れるかな
+[END]
+
+[START,card,fa,x]
+[TAG]ルマくん @YZHGQgYBV256669
+[URL]https://x.com/YZHGQgYBV256669/status/2074507516600582523?s=20
+[IMG]https://pbs.twimg.com/media/HMohlerbUAADfat?format=jpg&name=large
+[TXT]旅立ってた頃のエピソードより、がなり立てられブチ切れられ怒鳴られ涙目な僕です。あの時疲れ果ててたうえで怒鳴られてほんっとにしんどかった...
+[END]
+
+[START,card,fa,x]
+[TAG]ルマくん @YZHGQgYBV256669
+[URL]https://x.com/YZHGQgYBV256669/status/2073727960507691368?s=20
+[IMG]https://pbs.twimg.com/media/HMdcll3acAAXtIr?format=jpg&name=large
+[TXT]恐怖耐性診断テストで追いかけてくる絵に対して早口でキレちゃった僕です。メッシュがピンと立つくらい感情昂っちゃってるw　追伸：僕は女児じゃないです
+[END]
+
+[START,card,fa,x]
+[TAG]星空ほしなちゃん @if_q1q
+[URL]https://x.com/if_q1q/status/2068589120889516227
+[IMG]https://pbs.twimg.com/media/HLUa13zaMAA2DWm?format=jpg&name=large
+[TXT]ゆっくりアニーです。ゆっくりしていってね！凄くもちもちして可愛い！配信でもゆっくりアニーとして載せてみましたっ
+[END]
+
+[START,card,fa,x]
+[TAG]ろろさん @hiro_rogi_otk
+[URL]https://x.com/hiro_rogi_otk/status/2068743028983169024
+[IMG]https://pbs.twimg.com/media/HLWm0eUasAAjVNZ?format=jpg&name=large
+[TXT]ホラゲーに怖がってる僕です。確かに怖がってるときこんな感じでコントローラ持ち上げちゃうんだよね汗。ありがとう！
+[END]
+
+[START,card,fa,x]
+[TAG]星空ほしなちゃん @if_q1q
+[URL]https://x.com/if_q1q/status/2068174760719294589
+[IMG]https://pbs.twimg.com/media/HLOh-8ebEAAKfQ8?format=jpg&name=large
+[TXT]いつもの(?)ゴスロリ衣装を着てる僕です！方々で新しい扉を開いてしまったらしい。大丈夫かなぁ。可愛く描いてくれてありがと！
+[END]
+
+[START,card,fa,x]
+[TAG]ろろさん @hiro_rogi_otk
+[URL]https://x.com/hiro_rogi_otk/status/2066548403128213557
+[IMG]https://pbs.twimg.com/media/HK3a0a8aoAA9KgH?format=jpg&name=large
+[TXT]風邪引いて大変だった時期の僕です。冷えピタも顔の赤みも描いて頂いてます。ありがとう！無事元気になったよ！お待たせ！
+[END]
+
+[START,card,fa,x]
+[TAG]明火さん @degarasi_akr
+[URL]https://x.com/degarasi_akr/status/2061106092747497850
+[IMG]https://pbs.twimg.com/media/HJqEnbUbsAARTAh?format=jpg&name=4096x4096
+[TXT]なかなか自分ではしない表情かな、に描いていただきました！ドキリとしちゃった！カッコいい！！
+[END]
+
+[START,card,fa,x]
+[TAG]ましまさん @tkhs3017
+[URL]https://x.com/tkhs3017/status/2060339163334160812
+[IMG]https://pbs.twimg.com/media/HJfLizVbcAAO6rF?format=jpg&name=large
+[TXT]キリッとしたまゆ、口角を少し上げた口元。僕を格好良く描いてもらいました！実は格好良いFAは貴重なのです。
+[END]
+
+[START,card,fa,x]
+[TAG]星空ほしなちゃん @if_q1q
+[URL]https://x.com/if_q1q/status/2058447677994696762
+[IMG]https://pbs.twimg.com/media/HJETQLzagAAhAYJ?format=jpg&name=large
+[TXT]ウチのお猫様こと「クロ」と、アニャーイールドこと自分です。ウチはどちらからもベタベタするので、僕がベタベタ、クロがスンッなこともよくあります笑
+[END]
+
+[START,card,fa,x]
 [TAG]みくみんみんせみさん @miku_n_2439
 [URL]https://x.com/miku_n_2439/status/2056396158533332993
 [IMG]https://pbs.twimg.com/media/HInJaJ_asAAICxV?format=jpg&name=small
 [TXT]赤ちゃんな自分がバニー耳を付けてるところです。恥ずかしい💦
 [END]
 
-[START,card,fa_x]
+[START,card,fa,x]
 [TAG]星空ほしなちゃん @if_q1q
 [URL]https://x.com/if_q1q/status/2055167782027919784
 [IMG]https://pbs.twimg.com/media/HIVsNGGbcAAGUo-?format=jpg&name=small
 [TXT]むらいっちゃん（労働村の村人1さん）と一緒にバニーボーイ衣装を着た自分です。色々と癖が詰め込まれてて恥ずかしいっ
 [END]
 
-[START,card,fa_x]
+[START,card,fa,x]
+[TAG]ゆけさん @yuukei0706
+[URL]https://x.com/yuukei0706/status/2048442783518871947
+[IMG]https://pbs.twimg.com/media/HG2Hl-UbAAA0hHb?format=jpg&name=medium
+[TXT]ゆけさん、ぷりちゃん、くしちゃんと一緒に学園へ通ってる？自分です。身長低すぎてゆけさんのカバン頭に載せられちゃった
+[END]
+
+
+[START,card,fa,x]
 [TAG]abcさん @abc4x
 [URL]https://x.com/abc4x/status/2050624195059700065
 [IMG]https://pbs.twimg.com/media/HHVHZCLa8AAmQ9d?format=jpg&name=small
 [TXT]泣いてる自分です。とっても可愛く描いて頂きました！そんなに僕泣いてるかなぁ
 [END]
 
-[START,card,fa_x]
+
+[START,card,fa,x]
 [TAG]日陰セイアさん @Seia_Hikage
 [URL]https://x.com/arnie_yield/status/2045565574361825716
 [IMG]https://pbs.twimg.com/media/HGNOUvXbYAEgM1e?format=jpg&name=small
 [TXT]吊られながらぷりくしに虐められてる自分です。なぜ自分は吊られがちなのか🤔
 [END]
 
-[START,card,fa_x]
+[START,card,fa,x]
 [TAG]日陰セイアさん @Seia_Hikage
 [URL]https://x.com/arnie_yield/status/2043141198639185997
 [IMG]https://pbs.twimg.com/media/HFqyD0OasAAiiRQ?format=jpg&name=small
 [TXT]penguin-blue-waving-tearと同じ表情の自分です。初めての人間体の自分のFAでした！
 [END]
 
-## アリー・イールド
-[START,card,fa_x]
+## アリー・イールド（妹）
+[START,card,fa,x]
 [TAG]ゆけさん @yuukei0706
 [URL]https://x.com/yuukei0706/status/2040833335099076788
 [IMG]https://pbs.twimg.com/media/HFJ_EzkaoAAgekg?format=jpg&name=small
 [TXT]ぷりちゃん・くしちゃん・ゆけさんと一緒にバニー衣装を着てるアリーです。地味ーっにアニペンも居ます。
 [END]
 
-## アニペン
-[START,card,fa_x]
+## お猫さま（クロ・イールド）
+[START,card,fa,x]
+[TAG]豆みょさん @toumyou99
+[URL]https://x.com/toumyou99/status/2062160231636017215
+[IMG]https://pbs.twimg.com/media/HJ5DzSYbUAA2bqS?format=jpg&name=small
+[TXT]かわいいかわいいウチのお猫さまを描いていただきました！毛布めくってごめん！きょとん顔でこっち見てるの愛おしい！！
+[END]
+
+## アニペン（アニー、ペンギンの姿）
+
+[START,card,fa,x]
+[TAG]ゆけさん @yuukei0706
+[URL]https://x.com/yuukei0706/status/2045853767414010060
+[IMG]https://pbs.twimg.com/media/HGRUUVnbsAAyOqF?format=jpg&name=medium
+[TXT]ゆけさん、ぷりちゃん、くしちゃんの後ろでお団子食べてる自分です。お団子美味しい！
+[END]
+
+[START,card,fa,x]
+[TAG]ゆけさん @yuukei0706
+[URL]https://x.com/yuukei0706/status/2043317728128491625
+[IMG]https://pbs.twimg.com/media/HFtSpFRa8AA-wC2?format=jpg&name=900x900
+[TXT]ぷりちゃんくしちゃんのお忍びデートを後ろからゆけさんと眺める自分です。僕こんな時に声掛けたりしないよ！ﾎﾝﾄﾀﾞﾖ!!
+[END]
+
+[START,card,fa,x]
 [TAG]ゆけさん @yuukei0706
 [URL]https://x.com/yuukei0706/status/2043333013875134889
 [IMG]https://pbs.twimg.com/media/HFtgbaTbQAAj7yA?format=jpg&name=small
 [TXT]ぷりちゃん・くしちゃんの応援を眺めてる自分です。役得うひょーっ！
 [END]
 
-[START,card,fa_x]
+[START,card,fa,x]
 [TAG]ゆけさん @yuukei0706
 [URL]https://x.com/yuukei0706/status/2043302635101667626
 [IMG]https://pbs.twimg.com/media/HFtE2BIbkAA2PkX?format=jpg&name=small
 [TXT]ぷりちゃん・くしちゃん・ゆけさんとで相変わらず吊られてる自分です。何故なのか...
 [END]
 
-[START,card,fa_x]
+[START,card,fa,x]
 [TAG]ゆけさん @yuukei0706
 [URL]https://x.com/yuukei0706/status/2038286695234474353
 [IMG]https://pbs.twimg.com/media/HEly1IBbIAA4xBM?format=jpg&name=small
@@ -124,7 +300,23 @@
 自分がこれまでに開発／作成・リリースしたものをまとめました！是非色々試してみてくださいね
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
+[TAG]ゲーム
+[TITLE]しかくくん！ジャンプする！！Web移植版
+[IMG]./materials/portfolio/shikaku-jump-web.png
+[TXT]Pythonで書かれたゲームだった「しかくくん！ジャンプする！！」をWeb移植しました
+[URL]https://arnie-pj.github.io/shikaku-jump-web/
+[END]
+
+[START,card,thumb]
+[TAG]オフィシャルサイト
+[TITLE]Arnie Yield 公式サイト
+[IMG]./materials/portfolio/official-site.png
+[TXT]このサイトです。いかがでしょうか
+[URL]https://arnie-pj.github.io/official-site/
+[END]
+
+[START,card,thumb]
 [TAG]ファンサイト
 [TITLE]労働村の村人1さん 歌ってみた検索
 [IMG]./materials/portfolio/muraichi-utamita.png
@@ -132,7 +324,7 @@
 [URL]https://arnie-pj.github.io/muraichi-utamita/
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ユーティリティ
 [TITLE]推しが動いたぞ！（プロトタイプ）
 [IMG]./materials/icon_noimage.png
@@ -140,7 +332,7 @@
 [URL]https://github.com/arnie-pj/oshiugo
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ファンサイト
 [TITLE]照瑚なすさん 歌ってみた検索
 [IMG]./materials/portfolio/nasu-utamita.png
@@ -148,7 +340,7 @@
 [URL]https://arnie-pj.github.io/nasu-utamita/
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ファンサイト
 [TITLE]ゆかちボタン
 [IMG]./materials/portfolio/yukachi-button.png
@@ -156,7 +348,7 @@
 [URL]https://arnie-pj.github.io/yukachi-button/
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ユーティリティ
 [TITLE]KomeKome
 [IMG]./materials/portfolio/komekome.png
@@ -164,7 +356,7 @@
 [URL]https://github.com/arnie-pj/komekome
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ユーティリティ
 [TITLE]Retrogame Big Vision Viewer (RBV2)
 [IMG]./materials/portfolio/rbv2v2.png
@@ -172,7 +364,7 @@
 [URL]https://github.com/arnie-pj/retrogame-big-vision-viewer/
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ゲーム
 [TITLE]しかくくん！ジャンプする！！
 [IMG]./materials/portfolio/shikaku-jump.png
@@ -180,7 +372,7 @@
 [URL]https://github.com/arnie-pj/shikaku-jump
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ユーティリティ
 [TITLE]鼓膜カウンター
 [IMG]./materials/portfolio/komaku-counter.png
@@ -188,7 +380,7 @@
 [URL]https://github.com/arnie-pj/komaku-counter/
 [END]
 
-[START,card,img_comment]
+[START,card,thumb]
 [TAG]ファンゲーム
 [TITLE]お寿司だよ！ゆかっ狐集合！
 [IMG]./materials/portfolio/yukachi-sushi.jpg
@@ -203,10 +395,93 @@
 
 !!!# おススメ動画
 !!!## おススメ動画リンク集
-!!![START,card,link,youtube]
+!!![START,card,thumb,youtube]
 !!![URL]https://www.youtube.com/watch?v=a8qZZAwMQAI
 !!![END]
 !!!## おススメXリンク集
-!!![START,card,link,x]
+!!![START,card,square,x]
 !!![URL]https://x.com/arnie_yield/status/2058099249519456377
 !!![END]
+
+# Half Anniversary 特設
+[START,wide,html]
+私ことアニー・イールドは2月25日にデビューしました。<br>
+それ以来、たくさんの方に遊びに来て頂いて嬉しい限りです。<br>
+8月23日(日) XX時からハーフアニバーサリー記念配信します。<br>
+良かったら遊びに来てくださいね
+[END]
+
+## [企画]　あにさま　～アニー・イールドの夏～
+[START,wide,html]
+<b>締め切り日等調整中</b><br>
+アニー・イールドの新衣装を募集します！<br>
+お好きな画像で是非、夏の新衣装として良さそうな服を考えて頂けると嬉しいです<br>
+素材は下記からダウンロードお願いします<br>
+応募はXのDMから、もしくはXへ「 #あにサマ2026 」のタグを付けてポストでお願いします<br>
+応募いただいたイラストは、Half Anniversary 記念配信やWebサイトで紹介させてください<br>
+<br>
+<a href=./materials/arniesummer/arniesummer.zip> 下記4枚をまとめたzipファイル（55.1MB） </a>
+[END]
+
+## 応募用の元画像
+[START,card,thumb]
+[TAG]あにさま
+[TITLE]応募用元画像1
+[IMG]./materials/arniesummer/img0.png
+[TXT]ベーシックに正面を向いているポーズです
+[URL]./materials/arniesummer/img0.png
+[END]
+
+[START,card,thumb]
+[TAG]あにさま
+[TITLE]応募用元画像2
+[IMG]./materials/arniesummer/img1.png
+[TXT]ちょっと斜めを向いているポーズです
+[URL]./materials/arniesummer/img1.png
+[END]
+
+[START,card,thumb]
+[TAG]あにさま
+[TITLE]応募用元画像3
+[IMG]./materials/arniesummer/img2.png
+[TXT]右手を挙げて額の前に掲げてるポーズです
+[URL]./materials/arniesummer/img2.png
+[END]
+
+[START,card,thumb]
+[TAG]あにさま
+[TITLE]応募用元画像4
+[IMG]./materials/arniesummer/img3.png
+[TXT]右手を上げ前方へ伸ばしているポーズです
+[URL]./materials/arniesummer/img3.png
+[END]
+
+!!! [START,card,thumb]
+!!! [TAG]ファンサイト
+!!! [TITLE]ゆかちボタン
+!!! [IMG]./materials/portfolio/yukachi-button.png
+!!! [TXT]ゆかちの動画のチャット欄で言及されてたゆかちボタン、作っちゃいました。ボタンをタップしてゆかちの声を聞こう！
+!!! [URL]https://arnie-pj.github.io/yukachi-button/
+!!! [END]
+
+
+
+
+
+!!! <br>
+!!! <b>応募用の元画像</b><br>
+!!! <table frame="void">
+!!! <tr><td>
+!!! <img src="./materials/arniesummer/img0.png" width="500" height="500">
+!!! </td><td>
+!!! <img src="./materials/arniesummer/img1.png" width="500" height="500">
+!!! </td></tr>
+!!! <tr><td>
+!!! <img src="./materials/arniesummer/img2.png" width="500" height="500">
+!!! </td><td>
+!!! <img src="./materials/arniesummer/img3.png" width="500" height="500">
+!!! </td></tr>
+!!! </table><br>
+!!! <br>
+
+[END]
