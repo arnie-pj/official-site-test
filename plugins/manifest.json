@@ -1,0 +1,4 @@
+[
+  { "src": "./plugins/videolist/plugin.js",  "tabLabel": "動画いちらん" },
+  { "src": "./plugins/utasearch/plugin.js",  "tabLabel": "うた検索"     }
+]
